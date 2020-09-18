@@ -32,6 +32,7 @@ E.g. variables
 - Research on APIs and libraries to manipulate photos, etc.
 - Start thinking about DSL structure and mock implementation
 
+```
 Sample DSL:
 
 LET “image1.png” be dogImage
@@ -51,4 +52,5 @@ TEXT “Dog and Cat” AT THE TOP
 TEXT “Very Cute!” AT THE BOTTOM
 
 OVERLAY backgroundImage //overlays background image under foreground
+```
 
