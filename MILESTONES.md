@@ -19,12 +19,12 @@ We want to create a photo collage builder DSL. Users would be able to import ima
 - If leveraging APIs to do the basic image manipulation, then we should try to include as many features as possible
 - Animation would be a cool bonus (but not required). We imagine that we can do this by allowing users to create gifs.
 - Reusable macros and variables are what make this idea viable
-E.g. macros 
-- blur() blur image
-- repeat(x) repeat previous command x times
-E.g. variables
-- LET “image1.png” be dogImage
-- LET “image2.png” be catImage
+  - E.g. macros 
+    - blur() blur image
+    - repeat(x) repeat previous command x times
+  - E.g. variables
+    - LET “image1.png” be dogImage
+    - LET “image2.png” be catImage
 
 ###### Follow-up tasks
 - JavaScript/TypeScript, need to decide on the npm libraries we will leverage so we can concretely define what photo effects to support
