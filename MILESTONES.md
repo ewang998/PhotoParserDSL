@@ -1,5 +1,75 @@
 Add entries to this file summarising each project milestone. Don't forget that these need to have been discussed with your TA before the milestone deadline; also, remember to commit and push them by then!
 
+## Milestone 2 (Spetember 25, 2020):
+
+###### Division of Responsibilities:
+
+Raghav
+- Create the initial user study form
+- Help with user study
+- Contribute to creating grammar
+- Mock up DSL
+- Manage and keep GitHub Issues updated
+- Implementation of program
+
+Gordon
+- Help with user study
+- Contribute to creating grammar
+- Mock up DSL
+- Implementation of program
+
+Eric
+- Help with user study
+- Contribute to creating grammar
+- Mockup DSL
+- Implementation of program
+
+Maja
+- Bootstrap TypeScript & React App
+- Help with user study
+- Contribute to creating grammar
+- Mockup DSL
+- Implementation of program
+James
+- Help with user study
+- Contribute to creating grammar
+- Mockup DSL
+- Implementation of program
+
+###### Project Roadmap:
+Week 3
+- Finalize APIs -> jimp (https://www.npmjs.com/package/jimp)
+- Finalize features of DSL (what users can do)
+- Create project stub and initialize packages/files
+- Integrate and import JIMP API into project
+
+
+
+Week 4
+- Mockup of concrete language design
+	- EBNF/Grammar
+	- Tokenizing
+
+- Conduct first user study
+- Research how to conduct unbiased user studies
+- Add notes and modify DSL from user study feedbacks
+- Implement project using React or React with TypeScript
+- Use GitHub Issues to keep track of task and features
+
+Week 5
+- Plans for final user study
+- Nearing the final implementations of our project
+
+###### Summary of Progress So Far:
+- Researched and finalized APIs
+	- jimp: https://www.npmjs.com/package/jimp#methods
+	- Possibly image-js: https://www.npmjs.com/package/image-js
+- Selected project management tool and organized project using Github Issues
+- Created Slack group to organize project and communicate with team members
+- Bootstrapped repo
+
+
+
 ## Milestone 1 (September 18th 2020):
 
 ###### Brief description of planned DSL idea
