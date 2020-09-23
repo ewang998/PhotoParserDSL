@@ -38,7 +38,7 @@ James
 
 ###### Project Roadmap:
 Week 3
-- Finalize APIs -> jimp (https://www.npmjs.com/package/jimp)
+- Finalize APIs -> [jimp](https://www.npmjs.com/package/jimp)
 - Finalize features of DSL (what users can do)
 - Create project stub and initialize packages/files
 - Integrate and import JIMP API into project
@@ -62,11 +62,28 @@ Week 5
 
 ###### Summary of Progress So Far:
 - Researched and finalized APIs
-	- jimp: https://www.npmjs.com/package/jimp#methods
-	- Possibly image-js: https://www.npmjs.com/package/image-js
+	- [jimp](https://www.npmjs.com/package/jimp#methods)
+	- [jimp GitHub](https://github.com/oliver-moran/jimp)
+	- Possibly [image-js](https://www.npmjs.com/package/image-js)
 - Selected project management tool and organized project using Github Issues
 - Created Slack group to organize project and communicate with team members
 - Bootstrapped repo
+
+###### Final features that we want to include from [JIMP](https://github.com/oliver-moran/jimp):
+- blurring
+- color
+- composite (this builds the photo collage by overlaying)
+- crop
+- flip
+- invert
+- mask
+- print
+- resize
+- rotate
+- scale
+
+Note: Certain functionality, such as creating borders around images, can be accomplished using DSL macros/functions. This can be researched during the user study.
+
 
 
 
