@@ -1,0 +1,8 @@
+{
+  "short_name": "Photos DSL",
+  "name": "Photos Domain Specific Language",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
