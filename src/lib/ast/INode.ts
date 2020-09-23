@@ -3,7 +3,7 @@
  * Returns a file inside of a file buffer.
  */
 interface INode {
-  evaluate: () => Buffer;
+  evaluate: () => Promise<Buffer>;
 }
 
 export default INode;

@@ -5,7 +5,7 @@ class Program implements INode {
   private buffer: Buffer = Buffer.from('');
 
   // TODO: Write this method n stuff
-  public evaluate() {
+  public async evaluate() {
     return this.buffer;
   }
 }
