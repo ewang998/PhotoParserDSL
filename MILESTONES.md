@@ -45,11 +45,11 @@ James
 
 Week 3
 
-[x] Finalize APIs -> [jimp](https://www.npmjs.com/package/jimp)
-[] Finalize features of DSL (what users can do)
-[x] Create draft for first user study [here](https://docs.google.com/document/d/14LNGf1PBPJfkS_2CZtVtj3PGjhRWfNiCyQs7xm2liVo/edit?usp=sharing)
-[x] Create project stub and initialize packages/files
-[x] Integrate and import JIMP API into project
+- [x] Finalize APIs -> [jimp](https://www.npmjs.com/package/jimp)
+- [ ] Finalize features of DSL (what users can do)
+- [x] Create draft for first user study [here](https://docs.google.com/document/d/14LNGf1PBPJfkS_2CZtVtj3PGjhRWfNiCyQs7xm2liVo/edit?usp=sharing)
+- [x] Create project stub and initialize packages/files
+- [x] Integrate and import JIMP API into project
 
 Week 4
 
