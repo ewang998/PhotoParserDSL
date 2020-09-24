@@ -34,7 +34,8 @@ Maja
 - Contribute to creating grammar
 - Mockup DSL
 - Implementation of program
-  James
+
+James
 - Help with user study
 - Contribute to creating grammar
 - Mockup DSL
