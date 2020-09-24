@@ -2,7 +2,7 @@
 
 ## Milestone 2 (Spetember 25, 2020)
 
-###### Division of Responsibilities
+### Division of Responsibilities
 
 Raghav
 
@@ -40,10 +40,9 @@ James
 - Contribute to creating grammar
 - Mockup DSL
 - Implementation of program
-
-###### Project Roadmap:
-
-Week 3
+### Project Roadmap
+#### Week-By-Week
+##### Week 3
 
 - [x] Finalize APIs -> [jimp](https://www.npmjs.com/package/jimp)
 - [ ] Finalize features of DSL (what users can do)
@@ -51,7 +50,7 @@ Week 3
 - [x] Create project stub and initialize packages/files
 - [x] Integrate and import JIMP API into project
 
-Week 4
+##### Week 4
 
 - Mockup of concrete language design
 
@@ -64,12 +63,12 @@ Week 4
 - Implement project using React or React with TypeScript
 - Use GitHub Issues to keep track of task and features
 
-Week 5
+##### Week 5
 
 - Plans for final user study
 - Nearing the final implementations of our project
 
-###### Summary of Progress So Far:
+#### Summary of Progress So Far:
 
 - Researched and finalized APIs
   - [jimp](https://www.npmjs.com/package/jimp#methods)
@@ -79,7 +78,7 @@ Week 5
 - Created Slack group to organize project and communicate with team members
 - Bootstrapped repo
 
-###### Final features that we want to include from [JIMP](https://github.com/oliver-moran/jimp):
+### Final features that we want to include from [JIMP](https://github.com/oliver-moran/jimp):
 
 - blurring
 - color
