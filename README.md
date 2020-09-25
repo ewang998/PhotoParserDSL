@@ -5,6 +5,7 @@
 We're developing one.
 
 - [Milestones Document](./MILESTONES.md)
+- [Meeting Notes](./MEETING_NOTES.md)
 
 ## Development
 
