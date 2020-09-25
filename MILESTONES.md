@@ -3,9 +3,8 @@
 ## Milestone 2 (Spetember 25, 2020)
 
 ### Division of Responsibilities
-
-Raghav
-
+A high level of the different tasks we have are in our [project board](https://github.students.cs.ubc.ca/cpsc410-2020w-t1/cpsc410_project1_team11/projects/1). We've moved current issues to `in progress`, and we will use github & slack to make sure all members are on track, with meetings on Thursday after we meet with the TA. We plan to work on most of this project at the same time during those weekly meetings, so most of our tasks are shared. However, we will split up development tasks once we're ready.
+#### Raghav
 - Create the initial user study form
 - Help with user study
 - Contribute to creating grammar
@@ -13,21 +12,19 @@ Raghav
 - Manage and keep GitHub Issues updated
 - Implementation of program
 
-Gordon
-
+#### Gordon
 - Help with user study
 - Contribute to creating grammar
 - Mock up DSL
 - Implementation of program
 
-Eric
-
+#### Eric
 - Help with user study
 - Contribute to creating grammar
 - Mockup DSL
 - Implementation of program
 
-Maja
+#### Maja
 
 - Bootstrap TypeScript & React App
 - Help with user study
@@ -35,12 +32,13 @@ Maja
 - Mockup DSL
 - Implementation of program
 
-James
+#### James
 - Help with user study
 - Contribute to creating grammar
 - Mockup DSL
 - Implementation of program
 ### Project Roadmap
+
 #### Week-By-Week
 ##### Week 3
 
