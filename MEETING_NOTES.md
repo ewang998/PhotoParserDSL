@@ -1,6 +1,20 @@
 # Meeting Notes
 
-## 9/24/2020 (TA)
+
+## 9/24/2020 
+### Group
+- User Study
+  - Maja, Raghav, Gordon are going to at least each do one user study
+    - Maja: family/younger siblings, no coding experience
+    - Gordon: someone taking an intro to cs course
+  - Everyone makes duplicates of the thing/takes notes and don't show 'em
+  - Code snippet should be explanatory enough
+    - Ask if they want to be walked through it
+    - EBNF?
+- EBNF
+  - let's try and get it done by 6 :)
+ 
+### TA
 - User study
   - Try to do it over zoom if possible
   - At least three users (two for prototype, maybe one later)
