@@ -5,7 +5,7 @@
 ### Mockup of concrete language design:
 
 ```
-PROGRAM    ::= CANVAS STATEMENT* “RENDER AS” FILENAME
+PROGRAM    ::= "CANVAS" STATEMENT* “RENDER AS” FILENAME
 CANVAS     ::= “CANVAS” int int COLOR
 COLOR      ::= ^#(?:[0-9a-fA-F]{3}){1,2}$
 
