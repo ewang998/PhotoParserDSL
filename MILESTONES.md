@@ -4,6 +4,7 @@
 
 ### Mockup of concrete language design:
 
+```
 PROGRAM    ::= CANVAS STATEMENT* “RENDER AS” FILENAME
 CANVAS     ::= “CANVAS” int int COLOR
 COLOR      ::= ^#(?:[0-9a-fA-F]{3}){1,2}$
@@ -42,7 +43,7 @@ FLIP ::= “FLIP” (“HORIZONTAL” | “VERTICAL”)
 ROTATE ::= “ROTATE” [0-360]
 BRIGHTNESS ::= “BRIGHTNESS” [-1,1]
 RESIZE ::= RESIZE int int
-
+```
 
 ### User Study Notes
 #### Notes from Raghav’s user study:
