@@ -105,10 +105,11 @@ Bad:
 - Would like a visual of the photo as manipulated
 
 ##### Gordon
--Non-technical user (1, Male early 20s)
+
+- Non-technical user (1, Male early 20s)
 
 Good:
--The variable definitions (eg LET xyz be “image1.png”) was easy to understand
+- The variable definitions (eg LET xyz be “image1.png”) was easy to understand
 
 Bad:
 - Wanted more examples and documentation about the language. 
