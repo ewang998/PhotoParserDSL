@@ -1,6 +1,37 @@
 # Meeting Notes
 
-
+## 10/1/2020
+### TA
+- Clarification:
+  - Use DECLARE to do a function rather than a variable
+  - Could also do a LET here, and just check the names
+- Possibly expand functions later to take multiple arguments
+- Still need to add other image manipulation functions
+- Is there a reason why we'd expect an extension?
+  - limit strictly to pictures
+  - sometimes other places have weird extensions, but what we have is good enough
+- Clone
+  - Should the user be forced to declare another variable instead?
+  - Is it confusing? 
+    - Not really, copies make sense
+  - Could we do the same with let?
+    - Doing that would be pointers
+- More image processing commands is better
+- Animation?
+  - Able to save snapshots at a given amount of time
+  - Should be able to implement this, but later
+- General question from Gordon:
+  - By next week, how much should we have done?
+  - Four steps (tokenizing, parsing, validation, evaluation)
+  - Should have tokenizer done by next week; hard to work on rest w/out it
+  - We might be able to work on different parts at the same time
+  - Still need to split up coding tasks
+  - Evaluation will take the most time
+  - We should have validation steps (we _need_ validation for grading, and throw correct errors)
+    - Can build this into the parser/evaluation
+    - Nothing extreme
+ 
+  
 ## 9/24/2020 
 ### Group
 - User Study
