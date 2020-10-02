@@ -93,24 +93,29 @@ Good:
 ##### Maja
 
 - User was a non-technical user (older woman in 40s w/out tech background)
+
 Good:
 - Overall, language made sense
 - Variables were easy to pick up on, as well as functions. Single argument syntax made sense.
 - Mutability of photos (once you color/greyscale a photo, it stays that way) was intuitive
 - Positioning two images was easy
+
 Bad:
 - Difficult to understand how to place multiple images (did well with the second user study, but not the first, which required the user to place a series of images on the page)
 - Would like a visual of the photo as manipulated
 
 ##### Gordon
 -Non-technical user (1, Male early 20s)
+
 Good:
 -The variable definitions (eg LET xyz be “image1.png”) was easy to understand
+
 Bad:
 - Wanted more examples and documentation about the language. 
 - Does capitalization mean anything particular in the language?
 - Confused about potential same key words meaning different things
 - Relative positioning of images needed more thought (needed to think about the placements first before just writing the DSL)
+
 Other:
 - Additional features (which we didn’t include the in user study) such as contrast, lighting, sharpening etc.
 - I asked if providing x/y coordinates would be helpful. He said while it could be more precise, it could also make it more confusing
