@@ -1,6 +1,6 @@
 import AbstractTokenizer from './AbstractTokenizer';
 
-class PhotoTokenizer extends AbstractTokenizer {
+export class PhotoTokenizer extends AbstractTokenizer {
   private static RSERVED_WORD = '_';
 
   // TODO: set fixed literals

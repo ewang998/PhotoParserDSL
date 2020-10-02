@@ -1,4 +1,4 @@
-import INode from '../ast/INode';
+import { INode } from '../ast';
 import ITokenizer from '../Tokenizer/AbstractTokenizer';
 
 interface IParser {

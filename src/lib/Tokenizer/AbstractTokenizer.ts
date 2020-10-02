@@ -1,4 +1,4 @@
-abstract class AbstractTokenizer {
+export abstract class AbstractTokenizer {
   protected fixedLiterals: string[];
   protected tokens: string[];
   protected currentToken: number;

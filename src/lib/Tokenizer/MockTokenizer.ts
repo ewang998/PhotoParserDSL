@@ -1,6 +1,6 @@
 import AbstractTokenizer from './AbstractTokenizer';
 
-class MockTokenizer extends AbstractTokenizer {
+export class MockTokenizer extends AbstractTokenizer {
   constructor(tokens: string[]) {
     super('', []);
     this.tokens = tokens;
