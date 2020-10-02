@@ -46,7 +46,35 @@ RESIZE ::= RESIZE int int
 ```
 
 ### User Study Notes
-#### Notes from Raghav’s user study:
+#### Instructions Given 
+We gave our users the following syntax and instructions:
+```
+The following snippet of code:
+1. Creates an 1000x1000 canvas.
+2. Creates a small helper function to blur an image and then flip it.
+3. Blurs and flips both of the given images.
+4. Places the two images on the canvas, side by side, with “someImage” to the left of “anotherImage”
+4. Greyscales the canvas
+5. Places some text on the top of the canvas
+6. Renders the image into the file “collage.png”
+
+CANVAS 1000 1000 WHITE
+LET “image1.png” BE someImage
+LET “image2.png” BE anotherImage
+DEFINE BLURANDFLIP BE BLUR AND FLIP 180
+BLURANDFLIP someImage
+BLURANDFLIP anotherImage
+DRAW TO CANVAS someImage TO THE LEFT OF anotherImage
+GREYSCALE CANVAS 50%
+WRITE “Dog and Cat” AT THE TOP OF CANVAS
+RENDER AS collage.png
+```
+Then, we asked them to complete either one or both of the following tasks:
+- Using 3 photos(dog image, cat image, mouse image), create a pyramid photo collage with dog centered and at the top, cat below and to the left, and mouse below and to the right. Make the cat image black and white (greyscale). Add a description to the image, at the bottom of the photo collage (“this is an animal photo collage”)
+- Using 2 photos (dog image, cat image), lay them side by side. Have a background of size 1000 x 1000, light-blue. Define a function (method) to flip an image 180 degrees and make it black and white. Apply it to both the cat and the dog images, then draw both to the canvas.
+
+#### User Study Notes
+##### Raghav
 Bad:
 - Have function names separated by underscore
 - Confusion about how to place images next to each other and where do they get placed exactly
@@ -62,7 +90,7 @@ Good:
 - Not confused by DRAW and RENDER
 - Knew what DRAW TO CANVAS meant
 
-#### Notes from Maja’s user study:
+##### Maja
 
 - User was a non-technical user (older woman in 40s w/out tech background)
 Good:
@@ -74,7 +102,7 @@ Bad:
 - Difficult to understand how to place multiple images (did well with the second user study, but not the first, which required the user to place a series of images on the page)
 - Would like a visual of the photo as manipulated
 
-#### Notes from Gordon’s user study:
+##### Gordon
 -Non-technical user (1, Male early 20s)
 Good:
 -The variable definitions (eg LET xyz be “image1.png”) was easy to understand
@@ -87,7 +115,7 @@ Other:
 - Additional features (which we didn’t include the in user study) such as contrast, lighting, sharpening etc.
 - I asked if providing x/y coordinates would be helpful. He said while it could be more precise, it could also make it more confusing
 
-### Changes
+### EBNF Changes
 
 Based upon our user feedback, we made the following changes:
 
