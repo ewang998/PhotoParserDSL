@@ -2,6 +2,6 @@ import { INode, Program } from '../ast';
 
 interface INodeVisitor<T> {
   visit(n: INode): T;
-  visit(p: Program): T;
+  visitProgram(p: Program): T;
 }
 export default INodeVisitor;

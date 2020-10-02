@@ -4,7 +4,7 @@ export class PhotoTokenizer extends AbstractTokenizer {
   private static RSERVED_WORD = '_';
 
   // TODO: set fixed literals
-  private static FIXED_LITERALS = [];
+  private static FIXED_LITERALS: string[] = [];
 
   public static createTokenizer(inputProgram: string) {
     return new PhotoTokenizer(inputProgram, PhotoTokenizer.FIXED_LITERALS);

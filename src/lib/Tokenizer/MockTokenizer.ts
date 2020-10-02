@@ -6,7 +6,7 @@ export class MockTokenizer extends AbstractTokenizer {
     this.tokens = tokens;
   }
 
-  protected tokenize(token: string) {
+  protected tokenize(token: string): string[] {
     return [];
   }
 }

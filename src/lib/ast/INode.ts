@@ -5,6 +5,6 @@ import INodeVisitor from '../Visitor/INodeVisitor';
  * Returns a file inside of a file buffer.
  */
 export interface INode {
-  accept(visitor: INodeVisitor<unknown>): void;
+  accept<T>(visitor: INodeVisitor<T>): T;
 }
 export default INode;

@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
+import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 
 function DSLForm() {
   const [inputString, setInputString] = useState('');
@@ -9,12 +10,10 @@ function DSLForm() {
     event.preventDefault();
     const tokenizer = PhotoTokenizer.createTokenizer(inputString);
     const parser = PhotoParser.createParser();
-
-    // TODO: set file buffers or w/e
-    // parser.setFilesBuffers();
-
-    // TODO: set image on page
-    const retImage = await parser.parse(tokenizer).evaluate();
+    // TODO: Set file buffers
+    const evaluator = PhotoEvaluator.createEvaluator({});
+    const retImage = await evaluator.visit(parser.parse(tokenizer));
+    // TODO: Render buffer as image
   };
 
   // TODO: make a clean form with file buffers & photo uploads

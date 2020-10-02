@@ -1,10 +1,9 @@
-import PhotoEvaluator from '../Visitor/PhotoEvaluator';
+import INodeVisitor from '../Visitor/INodeVisitor';
 import INode from './INode';
 
 export class Program implements INode {
-  public accept(v: PhotoEvaluator) {
-    // TODO:
-    throw new Error('Not implemented');
+  public accept<T>(v: INodeVisitor<T>): T {
+    return v.visitProgram(this);
   }
 }
 export default Program;
