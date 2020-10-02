@@ -1,5 +1,6 @@
 import jimp from 'jimp';
-import { INode, Program } from '../ast';
+import INode from '../ast/INode';
+import Program from '../ast/Program';
 import INodeVisitor from './INodeVisitor';
 
 class PhotoEvaluator implements INodeVisitor<Promise<Buffer>> {

@@ -1,4 +1,5 @@
-import { INode, Program } from '../ast';
+import INode from '../ast/INode';
+import Program from '../ast/Program';
 
 interface INodeVisitor<T> {
   visit(n: INode): T;

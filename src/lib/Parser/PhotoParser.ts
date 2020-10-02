@@ -1,4 +1,4 @@
-import { Program } from '../ast';
+import Program from '../ast/Program';
 import ITokenizer from '../Tokenizer/AbstractTokenizer';
 import IParser from './IParser';
 

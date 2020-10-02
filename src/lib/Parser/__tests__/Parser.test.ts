@@ -11,10 +11,14 @@ const loadFileFromPublic = (filename: string): Buffer =>
 // we can use jimp.diff to test expected file outputs
 
 describe('parser tests', () => {
-  it('should not return an image for an empty program', async () => {
+  it('should throw on an empty tokenizer', async () => {
     const tokenizer = new MockTokenizer(['']);
     const parser = PhotoParser.createParser();
-    const image = await parser.parse(tokenizer).evaluate();
-    expect(image).toBeFalsy();
+    try {
+      await parser.parse(tokenizer);
+      fail('Expected an error to be thrown.');
+    } catch (e) {
+      // Expected an error to be thrown.
+    }
   });
 });

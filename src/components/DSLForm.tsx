@@ -6,14 +6,17 @@ import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 function DSLForm() {
   const [inputString, setInputString] = useState('');
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  const renderInput = async () => {
     const tokenizer = PhotoTokenizer.createTokenizer(inputString);
     const parser = PhotoParser.createParser();
     // TODO: Set file buffers
     const evaluator = PhotoEvaluator.createEvaluator({});
     const retImage = await evaluator.visit(parser.parse(tokenizer));
-    // TODO: Render buffer as image
+  };
+  
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    renderInput();
   };
 
   // TODO: make a clean form with file buffers & photo uploads

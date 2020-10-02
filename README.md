@@ -13,6 +13,11 @@ We're developing one.
 
 - Node v14.3.0
 
+### Setup
+
+- `npm i`
+- `npm start`
+
 ### Commands
 
 - `npm start`: Run the webpage. By default, spun up on port 3000.

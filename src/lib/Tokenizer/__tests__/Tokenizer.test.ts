@@ -10,7 +10,7 @@ const checkTokenizer = (tokenizer: AbstractTokenizer, expected: string[]) => {
 
 describe('tokenizer', () => {
   it('should correctly parse an empty program', () => {
-    const tokenizer = PhotoTokenizer.createTokenizer(',', []);
+    const tokenizer = PhotoTokenizer.createTokenizer(',');
     checkTokenizer(tokenizer, []);
   });
 });
