@@ -75,6 +75,10 @@ Then, we asked them to complete either one or both of the following tasks:
 
 #### User Study Notes
 ##### Raghav
+
+- First user was a computer science student from UBC (early 20's male)
+- Second user was a software engineer from Amazon (early 20's male)
+
 Bad:
 - Have function names separated by underscore
 - Confusion about how to place images next to each other and where do they get placed exactly
