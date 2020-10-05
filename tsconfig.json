@@ -14,9 +14,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "noImplicitAny": false
   },
-  "include": ["src"],
+  "include": ["src", "src/lib/ast/objects/Let.ts"],
   "jest": {
     "roots": ["<rootDir>/lib/Parser", "<rootDir>/lib/Tokenizer"],
     "preset": "ts-jest",

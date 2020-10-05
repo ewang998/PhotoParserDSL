@@ -1,4 +1,4 @@
-import Program from '../ast/Program';
+import INode from '../ast/INode';
 import ITokenizer from '../Tokenizer/AbstractTokenizer';
 import IParser from './IParser';
 
@@ -11,7 +11,8 @@ class PhotoParser implements IParser {
 
   // TODO: Parser
   public parse(tokenizer: ITokenizer) {
-    return new Program();
+    throw new Error('Not implemented');
+    return (null as unknown) as INode;
   }
 }
 
