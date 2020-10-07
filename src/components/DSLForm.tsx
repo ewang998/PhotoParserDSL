@@ -13,7 +13,7 @@ function DSLForm() {
     const evaluator = PhotoEvaluator.createEvaluator({});
     const retImage = await evaluator.visit(parser.parse(tokenizer));
   };
-  
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     renderInput();
@@ -21,16 +21,16 @@ function DSLForm() {
 
   // TODO: make a clean form with file buffers & photo uploads
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Program Text:
-        <textarea
-          value={inputString}
-          onChange={(e) => setInputString(e.target.value)}
-        />
-      </label>
-      <input type='submit' value='Submit' />
-    </form>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Program Text:
+          <textarea
+              value={inputString}
+              onChange={(e) => setInputString(e.target.value)}
+          />
+        </label>
+        <input type='submit' value='Submit' />
+      </form>
   );
 }
 
