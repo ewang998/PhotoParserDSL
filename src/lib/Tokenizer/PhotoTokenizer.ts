@@ -32,7 +32,7 @@ export class PhotoTokenizer extends AbstractTokenizer {
         "BELOW", "TO THE LEFT OF", "TO THE RIGHT OF", "APPLY", "TO", "BLUR", "GREYSCALE", "INVERT", "NORMALIZE",
         "SEPIA", "FLIP", "HORIZONTAL", "VERTICAL", "ROTATE", "BRIGHTNESS", "RESIZE"];
     private static SEPARATORS: string[] = [";"];
-    private static CUSTOM_TOKEN_PATTERNS: string[] = ["^#(?:[0-9a-fA-F]{3}){1,2}$", "\w+", "[\\w_]+"];
+    private static CUSTOM_TOKEN_PATTERNS: string[] = ["^#(?:[0-9a-fA-F]{3}){1,2}$", "\\w+", "[\\w_]+"];
 
     public static createTokenizer(inputProgram: string) {
         return new PhotoTokenizer(inputProgram, PhotoTokenizer.FIXED_LITERALS);
@@ -48,10 +48,6 @@ export class PhotoTokenizer extends AbstractTokenizer {
         if (inputProgram.length === 0) {
             return [];
         }
-
-        //TODO: should case matter? for example, CANVAS versus canvas
-
-        inputProgram = inputProgram.toUpperCase();
 
         let tokenPositions: number[] = [];
 
@@ -152,16 +148,14 @@ export class PhotoTokenizer extends AbstractTokenizer {
 
         for (let i = 1; i < tokenPositions.length; i++) {
 
-            tokens.push(inputProgram.substring(lastPosition, tokenPositions[i]));
+            tokens.push(inputProgram.substring(lastPosition, tokenPositions[i]).trim()); //trim here to avoid using another loop
             lastPosition = tokenPositions[i];
         }
 
-        //trim whitespaces
-        for (let i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].trim();
-        }
-
-        //console.log(tokens);
+        //for testing, see what the tokens are
+        // for (let i = 0; i < tokens.length; i++) {
+        //     console.log(tokens[i]);
+        // }
 
         return tokens;
     }
