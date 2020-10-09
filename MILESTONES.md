@@ -2,6 +2,36 @@
 
 ## Milestone 4 (October 9, 2020)
 
+### Status of implementation
+- tokenizer is completed
+- frontend webpage with image upload is expected to be complete on October 10th
+- parser is expected to be completed by October 9th
+- evaluator and validator is going to be started this weekend
+
+### Plans for final user study
+
+- Eric and James will be conducting the final user studies. We hope to complete this
+as soon as our implementation is complete
+
+### Planned timeline for the remaining days
+- Week of October 12 - continue/complete implementation. User studies will be conducted
+immediately following implementation
+
+- Weekend of October 12 - complete video presentation
+
+### Group Member Tasks:
+#### Eric:
+- evaluator
+#### Gordon:
+- may still be some work on tokenizing
+- frontend webpage to include image upload
+#### James:
+- parser
+#### Maja:
+- validator
+#### Raghav:
+- evaluator
+
 ### Updated EBNF:
 
 ```
