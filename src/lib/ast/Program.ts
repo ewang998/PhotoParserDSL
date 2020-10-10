@@ -18,6 +18,10 @@ export class Program implements INode {
     this.statements.push(statement);
   }
 
+  public getStatements() {
+    return this.statements;
+  }
+
   public accept<T>(v: INodeVisitor<T>): T {
     return v.visitProgram(this);
   }
