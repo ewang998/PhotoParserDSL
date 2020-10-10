@@ -6,7 +6,7 @@ import Canvas from '../ast/objects/Canvas';
 import Clone from '../ast/objects/Clone';
 import Color from '../ast/objects/Color';
 import Let from '../ast/objects/Let';
-import Primative from '../ast/objects/Primative';
+import Primitive from '../ast/objects/Primitive';
 import Var from '../ast/objects/Var';
 import Program from '../ast/Program';
 import INodeVisitor from './INodeVisitor';
@@ -41,7 +41,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
     return this.memory[n.name];
   }
 
-  visitPrimative(n: Primative): any {
+  visitPrimitive(n: Primitive): any {
     return n.value;
   }
 
@@ -65,7 +65,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   /**
    * When we grab a value from memory to "apply", we have three options:
    *  1. An array of ApplyThunks to execute (a user-declared "function")
-   *  2. A primative function (one of our PhotoFunction lambdas)
+   *  2. A primitive function (one of our PhotoFunction lambdas)
    *  3. A jimp photo
    */
   async visitApply(a: Apply) {

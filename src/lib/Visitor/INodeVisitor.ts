@@ -6,7 +6,7 @@ import Canvas from '../ast/objects/Canvas';
 import Clone from '../ast/objects/Clone';
 import Color from '../ast/objects/Color';
 import Let from '../ast/objects/Let';
-import Primative from '../ast/objects/Primative';
+import Primitive from '../ast/objects/Primitive';
 import Var from '../ast/objects/Var';
 import Program from '../ast/Program';
 import Write from '../ast/Write';
@@ -21,7 +21,7 @@ interface INodeVisitor<T> {
   visitVar(n: Var);
   visitDraw(d: Draw);
   visitWrite(w: Write);
-  visitPrimative(n: Primative);
+  visitPrimitive(n: Primitive);
   visitApply(a: Apply);
   visitLet(l: Let);
   visitDeclare(d: Declare);
