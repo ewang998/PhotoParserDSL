@@ -6,6 +6,7 @@ import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 import ImageUploader from "react-images-upload";
 
 function DSLForm() {
+  
     const [inputString, setInputString] = useState('');
     //pictures stored in this const
 
@@ -18,8 +19,6 @@ function DSLForm() {
 
 
     const renderInput = async () => {
-
-        console.log("renderInput");
 
         //pass in the array of pictures (which is an array of File) to evaluator
 
