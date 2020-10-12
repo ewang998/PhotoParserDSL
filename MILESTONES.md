@@ -73,6 +73,7 @@ FLIP         ::= "FLIP" ("HORIZONTAL" | "VERTICAL")
 ROTATE       ::= "ROTATE" [0-360]
 BRIGHTNESS   ::= "BRIGHTNESS" [-1,1]
 RESIZE       ::= "RESIZE" "WIDTH" int "HEIGHT" int
+BLUR         ::= "BLUR" "RADIUS" int
 ```
 
 ## Milestone 3 (October 2, 2020)
