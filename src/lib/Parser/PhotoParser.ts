@@ -54,7 +54,7 @@ class PhotoParser implements IParser {
 
     let program: Program = new Program(canvas, statements, filename);
 
-    console.log(program);
+    // console.log(program);
 
     return program;
   }
