@@ -5,7 +5,7 @@ import Statement from './Statement';
 
 class Write implements Statement {
   accept<T>(visitor: INodeVisitor<T>): T {
-    throw new Error('Method not implemented.');
+    return visitor.visitWrite(this);
   }
   public text: string;
   public photo: Var;
