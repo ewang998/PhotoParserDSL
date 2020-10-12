@@ -1,5 +1,20 @@
 # Meeting Notes
 
+## 10/9/2020
+### TA
+- Status update of implementations
+  - Using code from class, should citie where code was taken from
+  - Put comments on top of the class if entire code/class was taken from lecture material
+  - Alex said to understand what tokenizer does and write your own for full marks otherwise copying would have potential marks reduced
+  - TA not clear on where the border is for copying code and loosing marks
+  - No clear grading rubric given to TA
+  - TA will email back about tokenizer feedback from Alex
+  - Gordon looking for file uploading library
+  - Evaluator, Validation, and react app needs to be done next week
+  - Need to make demo video for final app next week
+  
+  
+
 ## 10/1/2020
 ### TA
 - Clarification:
