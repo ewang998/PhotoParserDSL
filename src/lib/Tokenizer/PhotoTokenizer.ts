@@ -30,8 +30,10 @@ export class PhotoTokenizer extends AbstractTokenizer {
         let programSplitBySpace: string[] = inputProgram.split(" ");
 
         for (let i = 0; i < programSplitBySpace.length; i++) {
-            //trim strings
-            let splitBySemicolon: string[] = programSplitBySpace[i].split(";");
+            // trim strings
+            // Regexp capture group technology allows us to keep the delimiter when splitting:
+            // https://www.bennadel.com/blog/3334-you-can-include-delimiters-in-the-result-of-javascripts-string-split-method-when-using-capturing-groups.htm
+            let splitBySemicolon: string[] = programSplitBySpace[i].split(/([;])/g);
 
             for (let i = 0; i < splitBySemicolon.length; i++) {
 
@@ -42,9 +44,9 @@ export class PhotoTokenizer extends AbstractTokenizer {
         }
 
         //for testing, see what the tokens are
-        // for (let i = 0; i < tokens.length; i++) {
-        //     console.log("FINAL TOKEN: " + tokens[i]);
-        // }
+        for (let i = 0; i < tokens.length; i++) {
+            console.log("FINAL TOKEN: " + tokens[i]);
+        }
 
         return tokens;
     }

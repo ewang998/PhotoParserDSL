@@ -45,13 +45,17 @@ class PhotoParser implements IParser {
 
     let canvas: Canvas = this.parseCanvas(tokenizer);
 
-    while (tokenizer.hasNext() && !tokenizer.checkNext(/RENDER AS/i)) {
+    while (tokenizer.hasNext() && !tokenizer.checkNext(/RENDER/i)) {
       statements.push(this.parseStatement(tokenizer));
     }
 
     let filename: string = this.parseRenderAs(tokenizer);
 
-    return new Program(canvas, statements, filename);
+    let program: Program = new Program(canvas, statements, filename);
+
+    // console.log(program);
+
+    return program;
   }
 
   // CANVAS ::= "CANVAS" "WIDTH" int "HEIGHT" int "COLOR" COLOR SEP
@@ -76,7 +80,7 @@ class PhotoParser implements IParser {
       statement = this.parseLet(tokenizer);
     } else if (tokenizer.checkNext(/CLONE/i)) {
       statement = this.parseClone(tokenizer);
-    } else if (tokenizer.checkNext(/DRAW TO CANVAS/i)) {
+    } else if (tokenizer.checkNext(/DRAW/i)) {
       statement = this.parseDraw(tokenizer);
     } else if (tokenizer.checkNext(/APPLY/i)) {
       statement = this.parseApply(tokenizer);
@@ -122,7 +126,7 @@ class PhotoParser implements IParser {
 
   // DRAW ::= "DRAW TO CANVAS" (IDENTIFIER POSITION ",")+
   private parseDraw(tokenizer: ITokenizer): Draw {
-    tokenizer.getAndCheckNext(/DRAW TO CANVAS/i);
+    tokenizer.getAndCheckNextSequence([/DRAW/i, /TO/i, /CANVAS/i]);
 
     let drawInstructions: DrawInstruction[] = [];
     while (tokenizer.checkNext(PhotoParser.REGEXPS.IDENTIFIER)) {
@@ -278,7 +282,7 @@ class PhotoParser implements IParser {
   }
 
   private parseRenderAs(tokenizer: ITokenizer): string {
-    tokenizer.getAndCheckNext(/RENDER AS/i);
+    tokenizer.getAndCheckNextSequence([/RENDER/i, /AS/i]);
     let filename: string = tokenizer.getAndCheckNext(PhotoParser.REGEXPS.FILENAME);
     tokenizer.getAndCheckNext(PhotoParser.REGEXPS.SEMICOLON);
 
