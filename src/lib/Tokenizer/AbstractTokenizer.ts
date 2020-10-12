@@ -19,6 +19,18 @@ export abstract class AbstractTokenizer {
   }
 
   /**
+   * Returns true iif the next tokens satisfies the given regexps.
+   */
+  public checkNextSequence(regexps: RegExp[]) {
+    for (let i = 0; i < regexps.length; i++) {
+      if (!regexps[i].test(this.tokens[this.currentToken + i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Returns the next token in the tokenizer.
    * Returns undefined if there are no more tokens.
    */
@@ -39,6 +51,10 @@ export abstract class AbstractTokenizer {
     return this.getNext();
   }
 
+  /**
+   * Returns an array of strings s where s[i] matches regexps[i]
+   * If any match fails, throw an error.
+   */
   public getAndCheckNextSequence(regexps: RegExp[]): string[] | never {
     let results: string[] = [];
 

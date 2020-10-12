@@ -3,6 +3,7 @@ import Apply from '../ast/functions/Apply';
 import ApplyThunk from '../ast/functions/ApplyThunk';
 import Declare from '../ast/functions/Declare';
 import INode from '../ast/INode';
+import AbsolutePosition from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
 import RelativePosition, { RelativePositionEnum } from '../ast/locations/RelativePosition';
 import Canvas from '../ast/objects/Canvas';
@@ -53,7 +54,7 @@ class PhotoParser implements IParser {
 
     let program: Program = new Program(canvas, statements, filename);
 
-    // console.log(program);
+    console.log(program);
 
     return program;
   }
@@ -157,12 +158,20 @@ class PhotoParser implements IParser {
       let posString: string = tokenizer.getNext().toUpperCase();
       let pos: RelativePositionEnum;
 
-      if (Object.keys(RelativePositionEnum).includes(posString)) {
-        // https://stackoverflow.com/questions/50417254/dynamically-access-enum-in-typescript-by-key
-        pos = (<any>RelativePositionEnum)[posString];
+      if (tokenizer.checkNext(/ABOVE/i)) {
+        tokenizer.getAndCheckNext(/ABOVE/i);
+        pos = RelativePositionEnum.ABOVE;
+      } else if (tokenizer.checkNext(/BELOW/i)) {
+        tokenizer.getAndCheckNext(/BELOW/i);
+        pos = RelativePositionEnum.BELOW;
+      } else if (tokenizer.checkNextSequence([/TO/i, /THE/i, /LEFT/i, /OF/i])) {
+        tokenizer.getAndCheckNextSequence([/TO/i, /THE/i, /LEFT/i, /OF/i]);
+        pos = RelativePositionEnum.LEFT;
+      } else if (tokenizer.checkNextSequence([/TO/i, /THE/i, /RIGHT/i, /OF/i])) {
+        tokenizer.getAndCheckNextSequence([/TO/i, /THE/i, /RIGHT/i, /OF/i]);
+        pos = RelativePositionEnum.RIGHT;
       } else {
-        // TODO: more specific error type?
-        throw new Error(`Unknown relative position: ${posString}`);
+        throw new Error(`Unknown relative position starting with: ${tokenizer.getNext()}`);
       }
 
       let relativeTo: string = tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER);
@@ -189,10 +198,37 @@ class PhotoParser implements IParser {
     return new Apply(fn, photo, args);
   }
 
-  // TODO Pending review with team...
-  // WRITE ::= "WRITE" TEXT POSITION (IDENTIFIER | "CANVAS")
+  // WRITE ::= "WRITE" TEXT ABSOLUTE_POSITION (IDENTIFIER | "CANVAS")
   private parseWrite(tokenizer: ITokenizer): Write {
-    throw new Error('Not implemented');
+    tokenizer.getAndCheckNext(/WRITE/i);
+    let text: string = tokenizer.getNext();
+
+    let pos: AbsolutePosition;
+
+    if (tokenizer.checkNextSequence([/AT/i, /THE/i, /BOTTOM/i, /OF/i])) {
+      tokenizer.getAndCheckNextSequence([/AT/i, /THE/i, /BOTTOM/i, /OF/i]);
+      pos = AbsolutePosition.BOTTOM;
+    } else if (tokenizer.checkNextSequence([/AT/i, /THE/i, /TOP/i, /OF/i])) {
+      tokenizer.getAndCheckNextSequence([/AT/i, /THE/i, /TOP/i, /OF/i]);
+      pos = AbsolutePosition.TOP;
+    } else if (tokenizer.checkNextSequence([/TO/i, /THE/i, /LEFT/i, /OF/i])) {
+      tokenizer.getAndCheckNextSequence([/TO/i, /THE/i, /LEFT/i, /OF/i]);
+      pos = AbsolutePosition.LEFT;
+    } else if (tokenizer.checkNextSequence([/TO/i, /THE/i, /RIGHT/i, /OF/i])) {
+      tokenizer.getAndCheckNextSequence([/TO/i, /THE/i, /RIGHT/i, /OF/i]);
+      pos = AbsolutePosition.RIGHT;
+    } else {
+      throw new Error(`Unknown absolute position starting with: ${tokenizer.getNext()}`);
+    }
+
+    let photo: Var;
+    if (tokenizer.checkNext(/CANVAS/i)) {
+      photo = new Var(tokenizer.getAndCheckNext(/CANVAS/i));
+    } else {
+      photo = new Var(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER));
+    }
+
+    return new Write(text, photo, pos);
   }
 
   // DEFINE ::= "DECLARE" IDENTIFIER "AS" FUNCTION ("AND" FUNCTION)*
