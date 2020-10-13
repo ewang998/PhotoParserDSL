@@ -12,7 +12,7 @@ export abstract class AbstractTokenizer {
   }
 
   /**
-   * Returns true iif the next token satisfies the given regexp.
+   * Returns true if the next token satisfies the given regexp.
    */
   public checkNext(regexp: RegExp) {
     return regexp.test(this.tokens[this.currentToken]);
