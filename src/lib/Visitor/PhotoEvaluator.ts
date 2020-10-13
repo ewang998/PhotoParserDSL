@@ -15,6 +15,7 @@ import Draw from '../ast/Draw';
 import Write from '../ast/Write';
 import DefaultFunctions from '../functions/DefaultFunctions';
 import PhotoFunction from '../functions/PhotoFunction';
+import Jimp from 'jimp';
 
 type MemoryValue = jimp | PhotoFunction | ApplyThunk[];
 
@@ -22,6 +23,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   // A map of filenames to raw filebuffers
   protected rawPhotos: { [key: string]: Buffer };
   protected memory: { [key: string]: MemoryValue };
+  protected outputPhoto: Jimp;
 
   public static createEvaluator(rawPhotos: { [key: string]: Buffer }) {
     return new PhotoEvaluator(rawPhotos);
@@ -92,8 +94,15 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
     throw new Error('Method not implemented.');
   }
 
-  async visitProgram(p: Program): Promise<null> {
-    throw new Error('Method not implemented.');
+  async visitProgram(p: Program): Promise<Jimp> {
+    // create canvas 
+    p.canvas.accept(this);
+
+    for (var s of p.statements) {
+      s.accept(this);
+    }
+
+    return this.outputPhoto;
   }
 
   visitLet(l: Let): Promise<null> {
@@ -101,7 +110,10 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   }
 
   visitCanvas(c: Canvas) {
-    throw new Error('Method not implemented.');
+    let canvas = new Jimp(c.width, c.height, c.color, (err, image) => {
+      // begin with an empty Jimp image as the canvas 
+    })
+    this.outputPhoto = canvas;
   }
 
   visitColor(c: Color) {
