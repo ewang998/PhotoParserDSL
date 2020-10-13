@@ -8,6 +8,11 @@ export enum RelativePositionEnum {
 export class RelativePosition {
   public relativeTo: string;
   public position: RelativePositionEnum;
+
+  constructor(relativeTo: string, position: RelativePositionEnum) {
+    this.relativeTo = relativeTo;
+    this.position = position;
+  }
 }
 
 export default RelativePosition;
