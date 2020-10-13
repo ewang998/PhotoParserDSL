@@ -2,7 +2,6 @@ import Draw, { DrawInstruction } from '../ast/Draw';
 import Apply from '../ast/functions/Apply';
 import ApplyThunk from '../ast/functions/ApplyThunk';
 import Declare from '../ast/functions/Declare';
-import INode from '../ast/INode';
 import AbsolutePosition from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
 import RelativePosition, { RelativePositionEnum } from '../ast/locations/RelativePosition';
@@ -87,7 +86,7 @@ class PhotoParser implements IParser {
       statement = this.parseApply(tokenizer);
     } else if (tokenizer.checkNext(/WRITE/i)) {
       statement = this.parseWrite(tokenizer);
-    } else if (tokenizer.checkNext(/DEFINE/i)) {
+    } else if (tokenizer.checkNext(/DECLARE/i)) {
       statement = this.parseDeclare(tokenizer);
     } else {
       // TODO: more specific error type?
@@ -125,16 +124,21 @@ class PhotoParser implements IParser {
     return new Clone(src, dest);
   }
 
-  // DRAW ::= "DRAW TO CANVAS" (IDENTIFIER POSITION ",")+
+  // DRAW ::= "DRAW TO CANVAS" (IDENTIFIER POSITION) (, IDENTIFIER POSITION)*
   private parseDraw(tokenizer: ITokenizer): Draw {
     tokenizer.getAndCheckNextSequence([/DRAW/i, /TO/i, /CANVAS/i]);
 
     let drawInstructions: DrawInstruction[] = [];
-    while (tokenizer.checkNext(PhotoParser.REGEXPS.IDENTIFIER)) {
+
+    let firstPhoto: Var = new Var(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER));
+    let firstPosition: CoordinatePosition | RelativePosition = this.parsePosition(tokenizer);
+    drawInstructions.push({ photo: firstPhoto, loc: firstPosition });
+
+    while (tokenizer.checkNext(PhotoParser.REGEXPS.COMMA)) {
+      tokenizer.getAndCheckNext(PhotoParser.REGEXPS.COMMA);
       let photo: Var = new Var(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER));
       let position: CoordinatePosition | RelativePosition = this.parsePosition(tokenizer);
       drawInstructions.push({ photo, loc: position });
-      tokenizer.getAndCheckNext(PhotoParser.REGEXPS.COMMA);
     }
 
     return new Draw(drawInstructions);
@@ -155,7 +159,6 @@ class PhotoParser implements IParser {
       return { x, y };
     } else {
       // RELATIVE_POSITION
-      let posString: string = tokenizer.getNext().toUpperCase();
       let pos: RelativePositionEnum;
 
       if (tokenizer.checkNext(/ABOVE/i)) {
@@ -253,18 +256,12 @@ class PhotoParser implements IParser {
   }
 
   private parseApplyThunk(tokenizer: ITokenizer): ApplyThunk {
-    if (tokenizer.checkNext(PhotoParser.REGEXPS.IDENTIFIER)) {
-      let identifier: string = tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER);
-      
-      return new ApplyThunk(new Var(identifier), []);
-    } else {
       let { fn, args } = this.parseCommand(tokenizer);
 
       return new ApplyThunk(fn, args);
-    }
   }
 
-  // COMMAND      ::= "BLUR" | ROTATE | "GREYSCALE" | RESIZE | FLIP | BRIGHTNESS | "INVERT" | "NORMALIZE" | "SEPIA"
+  // COMMAND      ::= "BLUR" | ROTATE | "GREYSCALE" | RESIZE | FLIP | BRIGHTNESS | "INVERT" | "NORMALIZE" | "SEPIA" | IDENTIFIER
   // FLIP         ::= "FLIP" ("HORIZONTAL" | "VERTICAL")
   // ROTATE       ::= "ROTATE" [0-360]
   // BRIGHTNESS   ::= "BRIGHTNESS" [-1,1]
@@ -310,8 +307,9 @@ class PhotoParser implements IParser {
         args.push(new Primitive(brightness));
         break;
       default:
-        // TODO: more specific error type?
-        throw new Error(`Unknown command: ${fnName}`);
+        // User-defined function
+        fn = new Var(fnName);
+        break;
     }
 
     return { fn, args };
