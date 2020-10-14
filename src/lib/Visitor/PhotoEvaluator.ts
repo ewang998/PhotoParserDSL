@@ -88,10 +88,39 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   }
 
   visitDraw(d: Draw) {
-    throw new Error('Method not implemented.');
+    // TODO: implement
+    d.accept(this);
   }
+  // Writes text to absolute position on identifier or canvas
   visitWrite(w: Write) {
-    throw new Error('Method not implemented.');
+    // TODO: use rawPhotos, memory
+    // TODO: writing text to AbsolutePosition
+    let text = w.text;
+    let textPos = w.position;
+    let imageName = w.photo.name;
+    let loadedImage;
+    let imageCaption = {
+                        text: text, 
+                        alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER, 
+                        alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM
+                      }; // object containing text and text positioning
+    let font = Jimp.FONT_SANS_10_BLACK;
+
+    // use jimp print to write text on image
+    Jimp.read(imageName)
+      // load font
+      .then(function (image) {
+        loadedImage = image;
+        return Jimp.loadFont(font) // should user be allowed to choose font, color, and size?
+      })
+      // write text to image
+      .then(function (font) {
+        loadedImage.print(font, textPos.x, textPos.y, imageCaption) // prints text on to image. Add extra parameter maxImageSize for wrapping text within image borders
+        .write(imageName); // TODO: write back to orginal image? 
+      })
+      .catch(function (err) {
+          console.error("Unable to write text to image: " + err);
+      });
   }
 
   async visitProgram(p: Program): Promise<Jimp> {
