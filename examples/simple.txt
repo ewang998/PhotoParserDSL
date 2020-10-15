@@ -1,0 +1,3 @@
+CANVAS WIDTH 5 HEIGHT 5 COLOR #ffffff;
+LET image.png BE HELLO_WORLD;
+RENDER AS done.png;

@@ -1,9 +1,9 @@
 import INodeVisitor from '../../Visitor/INodeVisitor';
 import IObject from './IObject';
 /**
- * Any primative type (string/text, number, etc.)
+ * Any primitive type (string/text, number, etc.)
  */
-class Primative implements IObject {
+class Primitive implements IObject {
   public value;
 
   constructor(value: any) {
@@ -11,8 +11,8 @@ class Primative implements IObject {
   }
 
   accept<T>(visitor: INodeVisitor<T>): T {
-    return visitor.visitPrimative(this);
+    return visitor.visitPrimitive(this);
   }
 }
 
-export default Primative;
+export default Primitive;

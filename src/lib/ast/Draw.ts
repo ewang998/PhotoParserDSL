@@ -5,7 +5,7 @@ import RelativePosition from './locations/RelativePosition';
 import Var from './objects/Var';
 import Statement from './Statement';
 
-interface DrawInstruction {
+export interface DrawInstruction {
   photo: Var;
   loc: RelativePosition | CoordinatePosition;
 }
