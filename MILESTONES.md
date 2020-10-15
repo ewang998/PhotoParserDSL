@@ -56,7 +56,7 @@ CLONE        ::= "CLONE" (IDENTIFIER | "CANVAS") "AS" IDENTIFIER
 // Whatever we put on the canvas is fused to the canvas as a new image
 // We don’t persist location/state
 
-DRAW         ::= "DRAW TO CANVAS" (IDENTIFIER POSITION) (, IDENTIFIER POSITION)*
+DRAW         ::= "DRAW TO CANVAS" (IDENTIFIER POSITION) ("," IDENTIFIER POSITION)*
 WRITE        ::= "WRITE" TEXT ABSOLUTE_POSITION (IDENTIFIER | "CANVAS")
 DEFINE       ::= "DECLARE" IDENTIFIER "AS" COMMAND ("AND" COMMAND)*
 SEP          ::= ";"
