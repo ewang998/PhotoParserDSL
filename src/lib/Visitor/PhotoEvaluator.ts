@@ -10,18 +10,18 @@ import Primitive from '../ast/objects/Primitive';
 import Var from '../ast/objects/Var';
 import Program from '../ast/Program';
 import INodeVisitor from './INodeVisitor';
-import jimp from 'jimp';
+import Jimp from 'jimp';
 import Draw from '../ast/Draw';
 import Write from '../ast/Write';
 import DefaultFunctions from '../functions/DefaultFunctions';
 import PhotoFunction from '../functions/PhotoFunction';
-import Jimp from 'jimp';
 import AbsolutePositionEnum from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
+import RelativePosition from '../ast/locations/RelativePosition';
 
-export type MemoryValue = jimp | PhotoFunction | ApplyThunk[];
+export type MemoryValue = Jimp | PhotoFunction | ApplyThunk[];
 
-class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
+class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   // A map of filenames to raw filebuffers
   protected rawPhotos: { [key: string]: Buffer };
   protected memory: { [key: string]: MemoryValue };
@@ -36,9 +36,9 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
     this.memory = { ...DefaultFunctions };
   }
 
-  // Example of how to read a jimp photo out from the rawPhotos map
+  // Example of how to read a Jimp photo out from the rawPhotos map
   private async getJimpPhoto(filename: string) {
-    return jimp.read(this.rawPhotos[filename]);
+    return Jimp.read(this.rawPhotos[filename]);
   }
 
   visitVar(n: Var): MemoryValue {
@@ -52,12 +52,12 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   /**
    * If we have an array of statements, this has to be an array of ApplyThunks. For each, we need to:
    *  1. Grab the photo stored in Var
-   *  2. Populate the memory @ ApplyThunk.uuid with the given jimp object
+   *  2. Populate the memory @ ApplyThunk.uuid with the given Jimp object
    *  3. Evaluate the thunk
    *  4. "Free" the uuid from the memory (paramater out of scope)
    * and then re-visit to apply the function in context.
    */
-  async evaluateApplyThunks(arr: ApplyThunk[], photo: jimp) {
+  async evaluateApplyThunks(arr: ApplyThunk[], photo: Jimp) {
     for (const thunk of arr) {
       this.memory[thunk.uuid] = photo;
       await this.visit(thunk);
@@ -68,7 +68,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
    * When we grab a value from memory to "apply", we have three options:
    *  1. An array of ApplyThunks to execute (a user-declared "function")
    *  2. A primitive function (one of our PhotoFunction lambdas)
-   *  3. A jimp photo
+   *  3. A Jimp photo
    */
   async visitApply(a: Apply) {
     const func = a.func.accept(this);
@@ -83,15 +83,35 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
     }
   }
 
-  async visit(n: INode): Promise<jimp> {
+  async visit(n: INode): Promise<Jimp> {
     await n.accept(this);
-    return (this.memory['CANVAS'] as unknown) as jimp;
+    return (this.memory['CANVAS'] as unknown) as Jimp;
   }
 
-  visitDraw(d: Draw) {
-    // TODO: implement
-    d.accept(this);
+  async visitDraw(d: Draw) {
+    // get the canvas
+    let canvas: Jimp = this.outputPhoto;
+    for (var instruction of d.instructions) {
+      let position: CoordinatePosition = this.getDrawPosition(instruction.loc);
+      canvas.composite(await instruction.photo.accept(this), position.x, position.y)
+    }
+    // blitz is just deleting everything under your image
+
+    this.outputPhoto = canvas;
   }
+
+  private getDrawPosition(loc: RelativePosition | CoordinatePosition): CoordinatePosition {
+    let result: CoordinatePosition;
+    if (loc instanceof RelativePosition) {
+        // TODO: how are we gonna get the position here?
+        result.x = 0;
+        result.y = 0;
+        return result;
+    } else {
+      return loc;
+    }
+  }
+
   // Writes text to absolute position on identifier or canvas
   visitWrite(w: Write) {
     // TODO: use rawPhotos, memory
@@ -108,8 +128,17 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
     let font = Jimp.FONT_SANS_10_BLACK;
     let coordinate = this.getAbCoordinate(textPos);
     
+    // if imagename is canvas then grab canvas Jimp
+    if (imageName === 'CANVAS') {
+      let canvas: Jimp = this.outputPhoto;
+      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
+      .then(font => {
+        canvas.print(font, coordinate.x, coordinate.y, imageCaption);
+        this.outputPhoto = canvas;
+      })
+    } else {
 
-    // use jimp print to write text on image
+    // use Jimp print to write text on image
     Jimp.read(imageName)
       // load font
       .then(function (image) {
@@ -124,9 +153,10 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
       .catch(function (err) {
           console.error("Unable to write text to image: " + err);
       });
+    }
   }
 
-  private getAbCoordinate(ab: AbsolutePositionEnum) {
+  private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
     let result: CoordinatePosition;
     let canvasH = this.outputPhoto.getHeight();
     let canvasW = this.outputPhoto.getHeight();
@@ -168,10 +198,11 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   }
 
   visitCanvas(c: Canvas) {
-    let canvas = new Jimp(c.width, c.height, c.color, (err, image) => {
+    let canvas: Jimp = new Jimp(c.width, c.height, c.color, (err, image) => {
       // begin with an empty Jimp image as the canvas 
     })
     this.memory['CANVAS'] = canvas;
+    this.outputPhoto = canvas;
   }
 
   visitColor(c: Color) {
