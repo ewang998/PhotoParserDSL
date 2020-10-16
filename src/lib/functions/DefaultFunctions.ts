@@ -8,13 +8,11 @@ const DefaultFunctions: { [key in DefaultFunctionsEnum]: PhotoFunction } = {
   BLUR: (p: jimp) => p.blur(50),
   INVERT: (p: jimp) => p.invert(),
   ROTATE: (p: jimp, degrees: number) => p.rotate(degrees),
-  GREYSCALE: (p: jimp) => p.greyscale(), // jimp does not take parameter for greyscale function
-  RESIZE: (p: jimp, width: number, height: number) => p.resize(width, height),
-  FLIP: (p: jimp, isHorizontal: boolean, isVertical: boolean) => p.flip(isHorizontal, isVertical),
-  BRIGHTNESS: (p: jimp, intensity: number) => p.brightness(intensity),
+  GREYSCALE: (p: jimp) => p.greyscale(),
   NORMALIZE: (p: jimp) => p.normalize(),
   SEPIA: (p: jimp) => p.sepia(),
-  // Can add more functions for increased functionality
-
+  BRIGHTNESS: (p: jimp, level: number) => p.brightness(level),
+  RESIZE: (p: jimp, width: number, height: number) => p.resize(width, height),
+  FLIP: (p: jimp, horizontal: boolean, vertical: boolean) => p.flip(horizontal, vertical),
 };
 export default DefaultFunctions;

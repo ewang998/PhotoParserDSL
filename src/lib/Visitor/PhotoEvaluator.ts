@@ -17,7 +17,7 @@ import DefaultFunctions from '../functions/DefaultFunctions';
 import PhotoFunction from '../functions/PhotoFunction';
 import Jimp from 'jimp';
 
-type MemoryValue = jimp | PhotoFunction | ApplyThunk[];
+export type MemoryValue = jimp | PhotoFunction | ApplyThunk[];
 
 class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
   // A map of filenames to raw filebuffers
@@ -55,12 +55,10 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
    *  4. "Free" the uuid from the memory (paramater out of scope)
    * and then re-visit to apply the function in context.
    */
-  async evaluateApplyThunks(arr: ApplyThunk[], photoVar: Var) {
+  async evaluateApplyThunks(arr: ApplyThunk[], photo: jimp) {
     for (const thunk of arr) {
-      const photo = await photoVar.accept(this);
       this.memory[thunk.uuid] = photo;
       await this.visit(thunk);
-      this.memory[thunk.uuid] = undefined;
     }
   }
 
@@ -72,11 +70,12 @@ class PhotoEvaluator implements INodeVisitor<Promise<jimp>> {
    */
   async visitApply(a: Apply) {
     const func = a.func.accept(this);
+    const photo = await a.photo.accept(this);
     if (Array.isArray(func)) {
-      await this.evaluateApplyThunks(func, a.photo);
+      await this.evaluateApplyThunks(func, photo);
     } else if (func instanceof Function) {
       const args = a.args.map((v) => v.accept(this));
-      await func(...args);
+      await func(photo, ...args);
     } else {
       throw new Error(`Invalid function in application: ${func}.`);
     }
