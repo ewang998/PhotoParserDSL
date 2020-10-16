@@ -15,6 +15,5 @@ const DefaultFunctions: { [key in DefaultFunctionsEnum]: PhotoFunction } = {
   BRIGHTNESS: (p: jimp, level: number) => p.brightness(level),
   RESIZE: (p: jimp, width: number, height: number) => p.resize(width, height),
   FLIP: (p: jimp, horizontal: boolean, vertical: boolean) => p.flip(horizontal, vertical),
-
 };
 export default DefaultFunctions;

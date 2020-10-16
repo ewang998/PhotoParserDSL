@@ -1,9 +1,9 @@
 import INodeVisitor from '../../Visitor/INodeVisitor';
 import IObject from './IObject';
 class Color implements IObject {
-  public hex: String;
+  public hex: string;
 
-  constructor(hex: String) {
+  constructor(hex: string) {
     this.hex = hex;
   }
 

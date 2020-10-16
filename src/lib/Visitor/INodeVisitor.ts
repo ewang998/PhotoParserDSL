@@ -12,19 +12,19 @@ import Program from '../ast/Program';
 import Write from '../ast/Write';
 
 interface INodeVisitor<T> {
-  visit(n: INode): T;
+    visit(n: INode): T;
 
-  visitProgram(p: Program);
-  visitCanvas(c: Canvas);
-  visitColor(c: Color);
+    visitProgram(p: Program);
+    visitCanvas(c: Canvas);
+    visitColor(c: Color);
 
-  visitVar(n: Var);
-  visitDraw(d: Draw);
-  visitWrite(w: Write);
-  visitPrimitive(n: Primitive);
-  visitApply(a: Apply);
-  visitLet(l: Let);
-  visitDeclare(d: Declare);
-  visitClone(c: Clone);
+    visitVar(n: Var, v?: any);
+    visitDraw(d: Draw);
+    visitWrite(w: Write);
+    visitPrimitive(n: Primitive, arg?: any);
+    visitApply(a: Apply);
+    visitLet(l: Let);
+    visitDeclare(d: Declare);
+    visitClone(c: Clone);
 }
 export default INodeVisitor;

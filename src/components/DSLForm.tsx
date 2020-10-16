@@ -2,8 +2,8 @@ import React, { FormEvent, useState } from 'react';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
 import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
-
 import ImageUploader from 'react-images-upload';
+import PhotoValidator from '../lib/Visitor/PhotoValidator';
 
 function DSLForm() {
     const [inputString, setInputString] = useState('');
@@ -21,10 +21,20 @@ function DSLForm() {
         try {
             const tokenizer = PhotoTokenizer.createTokenizer(inputString);
             const parser = PhotoParser.createParser();
+            const program = parser.parse(tokenizer);
+            // TODO: Pass buffers onto validator and evalutator
+            const validator = PhotoValidator.createValidator({});
+            const validationError = validator.visit(program);
+
+            if (validationError) {
+                setErrorString(validationError);
+                return;
+            }
+
             const evaluator = PhotoEvaluator.createEvaluator({});
-            const retImage = await evaluator.visit(parser.parse(tokenizer));
+            setFinalOutputPicture(await evaluator.visit(program));
         } catch (e) {
-            setErrorString(e.getMessage());
+            setErrorString(e.message);
         }
 
         //TODO: set the retImage to finalOutputPicture, this will be rendered on the web page
