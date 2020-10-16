@@ -33,6 +33,7 @@ function DSLForm() {
 
             const evaluator = PhotoEvaluator.createEvaluator({});
             setFinalOutputPicture(await evaluator.visit(program));
+            setErrorString('');
         } catch (e) {
             setErrorString(e.message);
         }
