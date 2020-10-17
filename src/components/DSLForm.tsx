@@ -88,15 +88,15 @@ function DSLForm() {
     };
 
     //TODO: can comment this out for now to prevent auto form submission
-    const handleInput = async (event: FormEvent) => {
-        event.preventDefault();
-
-        setTimeout(function () {
-            if (inputString !== '' && pictures.length > 0) {
-                renderInput();
-            }
-        }, 500);
-    };
+    // const handleInput = async (event: FormEvent) => {
+    //     event.preventDefault();
+    //
+    //     setTimeout(function () {
+    //         if (inputString !== '' && pictures.length > 0) {
+    //             renderInput();
+    //         }
+    //     }, 500);
+    // };
 
     const onDrop = (pictureArray: any[]) => {
         //replace the existing array
@@ -177,7 +177,7 @@ function DSLForm() {
 
     const renderFinalImage = () => {
 
-        if (finalOutputPictureBase64 != '' && finalOutputPictureMIME != '') {
+        if (finalOutputPictureBase64 !== '' && finalOutputPictureMIME !== '') {
             return <img src={`data:${finalOutputPictureMIME};base64,${finalOutputPictureBase64}`}
                         alt={"finalOutputImage"}/>
         } else {
@@ -226,7 +226,6 @@ function DSLForm() {
                     value={inputString}
                     onChange={event => {
                         setInputString(event.target.value);
-                        handleInput(event);
                     }}
                 />
                 <input
