@@ -1,9 +1,13 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
 import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 import ImageUploader from 'react-images-upload';
 import PhotoValidator from '../lib/Visitor/PhotoValidator';
+import EBNFMarkdown from '../EBNF.md';
+import ExampleMarkdown from '../Example.md';
+import './DSLForm.css';
 
 function DSLForm() {
     const [inputString, setInputString] = useState('');
@@ -15,6 +19,15 @@ function DSLForm() {
     let [errors, setErrorString] = useState('');
 
     let [finalOutputPicture, setFinalOutputPicture] = useState(null);
+
+    let [ebnf, setEBNF] = useState(null);
+
+    let [example, setExample] = useState(null);
+
+    useEffect(() => {
+        fetch(EBNFMarkdown).then((res) => res.text()).then((text) => setEBNF(text));
+        fetch(ExampleMarkdown).then((res) => res.text()).then((text) => setExample(text));
+    }, []);
 
     const renderInput = async () => {
         //pass in the array of pictures (which is an array of File) to evaluator
@@ -92,8 +105,25 @@ function DSLForm() {
         <div style={{ textAlign: 'center' }}>
             <h1>PHOTO COLLAGE DSL PROGRAM</h1>
             <h2>CPSC 410 2020WT1</h2>
-            <h3>TODO: provide instructions, possibly EBNF on how to use program</h3>
-            <h3 style={{ marginTop: '5rem' }}>Upload your images here:</h3>
+            <h3>Instructions:</h3>
+            <div className="instructions-container">
+                <p>
+                    1. Upload any images you wish to use in your collage.<br />
+                    2. Enter your program in the text area provided.<br />
+                    3. Click Build Collage!<br /><br />
+
+                    Remember that image names in your program must match the uploaded image name exactly!<br />
+                </p>
+            </div>
+            <h3>EBNF:</h3>
+            <div>
+                <ReactMarkdown source={ebnf} className="markdown-container" />
+            </div>
+            <h3>Example usage:</h3>
+            <div>
+                <ReactMarkdown source={example} className="markdown-container" />
+            </div>
+            <h3> Upload your images here:</h3>
             <ImageUploader
                 withIcon={false} // no point since you can't drag images to the icon to upload
                 onChange={onDrop}
