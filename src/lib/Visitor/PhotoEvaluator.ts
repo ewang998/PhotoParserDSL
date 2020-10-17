@@ -85,7 +85,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   async visit(n: INode): Promise<Jimp> {
     await n.accept(this);
-    return (this.memory['CANVAS'] as unknown) as Jimp;
+    //return (this.memory['CANVAS'] as unknown) as Jimp;
+    return this.outputPhoto;
   }
 
   async visitDraw(d: Draw) {
@@ -124,7 +125,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
                         alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER, 
                         alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM
                       }; // object containing text and text positioning
-                      
+
     let coordinate = this.getAbCoordinate(textPos);
     
     // if imagename is canvas then grab canvas Jimp
