@@ -1,9 +1,12 @@
-import React, { FormEvent, useState } from 'react';
+import React, {FormEvent, useState} from 'react';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
 import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 import ImageUploader from 'react-images-upload';
 import PhotoValidator from '../lib/Visitor/PhotoValidator';
+import {file} from "@babel/types";
+
+let toBuffer = require('blob-to-buffer')
 
 function DSLForm() {
     const [inputString, setInputString] = useState('');
@@ -14,16 +17,19 @@ function DSLForm() {
 
     let [errors, setErrorString] = useState('');
 
+    let [picturesBufferMap, setPicturesBufferMap] = useState({});
+
     let [finalOutputPicture, setFinalOutputPicture] = useState(null);
 
     const renderInput = async () => {
         //pass in the array of pictures (which is an array of File) to evaluator
         try {
+
             const tokenizer = PhotoTokenizer.createTokenizer(inputString);
             const parser = PhotoParser.createParser();
             const program = parser.parse(tokenizer);
-            // TODO: Pass buffers onto validator and evalutator
-            const validator = PhotoValidator.createValidator({});
+
+            const validator = PhotoValidator.createValidator(picturesBufferMap);
             const validationError = validator.visit(program);
 
             if (validationError) {
@@ -64,9 +70,62 @@ function DSLForm() {
         }, 500);
     };
 
-    const onDrop = (pictureArray: File[]) => {
+    const onDrop = (pictureArray: any[]) => {
         //replace the existing array
-        setPictures(pictureArray);
+
+        convertAllToBuffer(pictureArray).then((done: any) => {
+            let rawPhotos: { [key: string]: Buffer } = done;
+
+            setPicturesBufferMap(rawPhotos);
+            setPictures(pictureArray);
+        });
+
+    };
+
+    const convertAllToBuffer = (pictureArray: any[]) => {
+
+        return new Promise((resolve, reject) => {
+
+            let promises: any = [];
+
+            let rawPhotos: { [key: string]: Buffer } = {};
+
+            for (let i = 0; i < pictureArray.length; i++) {
+
+                let currentPicture: any = pictureArray[i]; //get the File
+
+                let pictureName = currentPicture.name;
+
+                promises.push(convertToBuffer(currentPicture).then((pictureBuffer: any) => {
+                    rawPhotos[pictureName] = pictureBuffer;
+                }));
+
+            }
+
+            Promise.all(promises).then(() => {
+                resolve(rawPhotos)
+            });
+
+        })
+    };
+
+
+    const convertToBuffer = (imageBlob: Blob) => {
+
+        return new Promise((resolve, reject) => {
+
+            toBuffer(imageBlob, function (err, pictureBuffer: Buffer) {
+                if (err) {
+                    console.log("err: " + err);
+                    throw err;
+                }
+
+                resolve(pictureBuffer);
+
+            });
+
+        });
+
     };
 
     const renderFileNames = () => {
@@ -89,11 +148,11 @@ function DSLForm() {
     };
 
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{textAlign: 'center'}}>
             <h1>PHOTO COLLAGE DSL PROGRAM</h1>
             <h2>CPSC 410 2020WT1</h2>
             <h3>TODO: provide instructions, possibly EBNF on how to use program</h3>
-            <h3 style={{ marginTop: '5rem' }}>Upload your images here:</h3>
+            <h3 style={{marginTop: '5rem'}}>Upload your images here:</h3>
             <ImageUploader
                 withIcon={false} // no point since you can't drag images to the icon to upload
                 onChange={onDrop}
@@ -101,13 +160,13 @@ function DSLForm() {
                 imgExtension={['.jpg', '.jpeg', '.png']}
                 maxFileSize={5242880}
                 withPreview={true}
-                fileContainerStyle={{ maxWidth: '25rem' }}
+                fileContainerStyle={{maxWidth: '25rem'}}
             />
             {renderFileNames()}
             <h3>Enter your program here:</h3>
-            <form style={{ paddingTop: '1rem' }} onSubmit={handleSubmit}>
+            <form style={{paddingTop: '1rem'}} onSubmit={handleSubmit}>
                 <textarea
-                    style={{ margin: 'auto', width: '36rem', height: '12rem' }}
+                    style={{margin: 'auto', width: '36rem', height: '12rem'}}
                     placeholder={'Enter program here'}
                     value={inputString}
                     onChange={event => {
@@ -118,10 +177,10 @@ function DSLForm() {
                 <input
                     type="submit"
                     value="Build Collage!"
-                    style={{ margin: 'auto', display: 'block', marginTop: '1rem' }}
+                    style={{margin: 'auto', display: 'block', marginTop: '1rem'}}
                 />
             </form>
-            <h2 style={{ color: 'red' }}>{errors}</h2>
+            <h2 style={{color: 'red'}}>{errors}</h2>
             <div>{finalOutputPicture}</div>
         </div>
     );
