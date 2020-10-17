@@ -1,5 +1,6 @@
 import INodeVisitor from '../Visitor/INodeVisitor';
 import AbsolutePosition from './locations/AbsolutePosition';
+import CoordinatePosition from './locations/CoordinatePosition';
 import Var from './objects/Var';
 import Statement from './Statement';
 
@@ -7,6 +8,7 @@ class Write implements Statement {
   public text: string;
   public photo: Var;
   public position: AbsolutePosition;
+  //public position: CoordinatePosition;
 
   constructor(text: string, photo: Var, position: AbsolutePosition) {
     this.text = text;
@@ -17,6 +19,7 @@ class Write implements Statement {
   accept<T>(visitor: INodeVisitor<T>): T {
     throw new Error('Method not implemented.');
   }
+
 }
 
 export default Write;

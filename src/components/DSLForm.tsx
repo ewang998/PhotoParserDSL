@@ -1,13 +1,18 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import EBNFMarkdown from '../EBNF.md';
+import ExampleMarkdown from '../Example.md';
+import './DSLForm.css';
+
+import React, {FormEvent, useEffect, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
 import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 import ImageUploader from 'react-images-upload';
 import PhotoValidator from '../lib/Visitor/PhotoValidator';
-import EBNFMarkdown from '../EBNF.md';
-import ExampleMarkdown from '../Example.md';
-import './DSLForm.css';
+
+import Jimp from 'jimp';
+
+let toBuffer = require('blob-to-buffer');
 
 function DSLForm() {
     const [inputString, setInputString] = useState('');
@@ -18,7 +23,11 @@ function DSLForm() {
 
     let [errors, setErrorString] = useState('');
 
-    let [finalOutputPicture, setFinalOutputPicture] = useState(null);
+    let [picturesBufferMap, setPicturesBufferMap] = useState({});
+
+    let [finalOutputPictureBase64, setFinalOutputPictureBase64] = useState('');
+    let [finalOutputPictureMIME, setFinalOutputPictureBase64MIME] = useState('');
+
 
     let [ebnf, setEBNF] = useState(null);
 
@@ -32,11 +41,12 @@ function DSLForm() {
     const renderInput = async () => {
         //pass in the array of pictures (which is an array of File) to evaluator
         try {
+
             const tokenizer = PhotoTokenizer.createTokenizer(inputString);
             const parser = PhotoParser.createParser();
             const program = parser.parse(tokenizer);
-            // TODO: Pass buffers onto validator and evalutator
-            const validator = PhotoValidator.createValidator({});
+
+            const validator = PhotoValidator.createValidator(picturesBufferMap);
             const validationError = validator.visit(program);
 
             if (validationError) {
@@ -44,8 +54,19 @@ function DSLForm() {
                 return;
             }
 
-            const evaluator = PhotoEvaluator.createEvaluator({});
-            setFinalOutputPicture(await evaluator.visit(program));
+            const evaluator = PhotoEvaluator.createEvaluator(picturesBufferMap);
+
+            let image: Jimp = await evaluator.visit(program);
+
+            // let imageBuffer: Buffer = await image.getBufferAsync(image.getMIME()); //TODO
+            let imageBuffer: Buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+
+            let imageBase64: string = imageBuffer.toString('base64');
+
+            setFinalOutputPictureBase64(imageBase64);
+            //setFinalOutputPictureBase64MIME(image.getMIME());
+            setFinalOutputPictureBase64MIME(Jimp.MIME_PNG); //TODO
+
             setErrorString('');
         } catch (e) {
             setErrorString(e.message);
@@ -67,19 +88,72 @@ function DSLForm() {
     };
 
     //TODO: can comment this out for now to prevent auto form submission
-    const handleInput = async (event: FormEvent) => {
-        event.preventDefault();
+    // const handleInput = async (event: FormEvent) => {
+    //     event.preventDefault();
+    //
+    //     setTimeout(function () {
+    //         if (inputString !== '' && pictures.length > 0) {
+    //             renderInput();
+    //         }
+    //     }, 500);
+    // };
 
-        setTimeout(function () {
-            if (inputString !== '' && pictures.length > 0) {
-                renderInput();
-            }
-        }, 500);
+    const onDrop = (pictureArray: any[]) => {
+        //replace the existing array
+
+        convertAllToBuffer(pictureArray).then((done: any) => {
+            let rawPhotos: { [key: string]: Buffer } = done;
+
+            setPicturesBufferMap(rawPhotos);
+            setPictures(pictureArray);
+        });
+
     };
 
-    const onDrop = (pictureArray: File[]) => {
-        //replace the existing array
-        setPictures(pictureArray);
+    const convertAllToBuffer = (pictureArray: any[]) => {
+
+        return new Promise((resolve, reject) => {
+
+            let promises: any = [];
+
+            let rawPhotos: { [key: string]: Buffer } = {};
+
+            for (let i = 0; i < pictureArray.length; i++) {
+
+                let currentPicture: any = pictureArray[i]; //get the File
+
+                let pictureName = currentPicture.name;
+
+                promises.push(convertToBuffer(currentPicture).then((pictureBuffer: any) => {
+                    rawPhotos[pictureName] = pictureBuffer;
+                }));
+
+            }
+
+            Promise.all(promises).then(() => {
+                resolve(rawPhotos)
+            });
+
+        })
+    };
+
+
+    const convertToBuffer = (imageBlob: Blob) => {
+
+        return new Promise((resolve, reject) => {
+
+            toBuffer(imageBlob, function (err, pictureBuffer: Buffer) {
+                if (err) {
+                    console.log("err: " + err);
+                    throw err;
+                }
+
+                resolve(pictureBuffer);
+
+            });
+
+        });
+
     };
 
     const renderFileNames = () => {
@@ -101,27 +175,37 @@ function DSLForm() {
         }
     };
 
+    const renderFinalImage = () => {
+
+        if (finalOutputPictureBase64 !== '' && finalOutputPictureMIME !== '') {
+            return <img src={`data:${finalOutputPictureMIME};base64,${finalOutputPictureBase64}`}
+                        alt={"finalOutputImage"}/>
+        } else {
+            return <div/>
+        }
+    };
+
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{textAlign: 'center'}}>
             <h1>PHOTO COLLAGE DSL PROGRAM</h1>
             <h2>CPSC 410 2020WT1</h2>
             <h3>Instructions:</h3>
             <div className="instructions-container">
                 <p>
-                    1. Upload any images you wish to use in your collage.<br />
-                    2. Enter your program in the text area provided.<br />
-                    3. Click Build Collage!<br /><br />
+                    1. Upload any images you wish to use in your collage.<br/>
+                    2. Enter your program in the text area provided.<br/>
+                    3. Click Build Collage!<br/><br/>
 
-                    Remember that image names in your program must match the uploaded image name exactly!<br />
+                    Remember that image names in your program must match the uploaded image name exactly!<br/>
                 </p>
             </div>
             <h3>EBNF:</h3>
             <div>
-                <ReactMarkdown source={ebnf} className="markdown-container" />
+                <ReactMarkdown source={ebnf} className="markdown-container"/>
             </div>
             <h3>Example usage:</h3>
             <div>
-                <ReactMarkdown source={example} className="markdown-container" />
+                <ReactMarkdown source={example} className="markdown-container"/>
             </div>
             <h3> Upload your images here:</h3>
             <ImageUploader
@@ -131,28 +215,27 @@ function DSLForm() {
                 imgExtension={['.jpg', '.jpeg', '.png']}
                 maxFileSize={5242880}
                 withPreview={true}
-                fileContainerStyle={{ maxWidth: '25rem' }}
+                fileContainerStyle={{maxWidth: '25rem'}}
             />
             {renderFileNames()}
             <h3>Enter your program here:</h3>
-            <form style={{ paddingTop: '1rem' }} onSubmit={handleSubmit}>
+            <form style={{paddingTop: '1rem'}} onSubmit={handleSubmit}>
                 <textarea
-                    style={{ margin: 'auto', width: '36rem', height: '12rem' }}
+                    style={{margin: 'auto', width: '36rem', height: '12rem'}}
                     placeholder={'Enter program here'}
                     value={inputString}
                     onChange={event => {
                         setInputString(event.target.value);
-                        handleInput(event);
                     }}
                 />
                 <input
                     type="submit"
                     value="Build Collage!"
-                    style={{ margin: 'auto', display: 'block', marginTop: '1rem' }}
+                    style={{margin: 'auto', display: 'block', marginTop: '1rem'}}
                 />
             </form>
-            <h2 style={{ color: 'red' }}>{errors}</h2>
-            <div>{finalOutputPicture}</div>
+            <h2 style={{color: 'red'}}>{errors}</h2>
+            <div>{renderFinalImage()}</div>
         </div>
     );
 }

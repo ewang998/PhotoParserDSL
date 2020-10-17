@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "blob-to-buffer": "^1.2.8",
         "color-string": "^1.5.3",
         "escape-string-regexp": "^4.0.0",
         "jimp": "^0.16.1",
