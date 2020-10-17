@@ -21,6 +21,8 @@ import RelativePosition from '../ast/locations/RelativePosition';
 
 export type MemoryValue = Jimp | PhotoFunction | ApplyThunk[];
 
+const debug = str => console.log(`evaluator: ${str}`);
+
 class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   // A map of filenames to raw filebuffers
   protected rawPhotos: { [key: string]: Buffer };
@@ -58,6 +60,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
    * and then re-visit to apply the function in context.
    */
   async evaluateApplyThunks(arr: ApplyThunk[], photo: Jimp) {
+    debug(`Evaluating ${arr.length} apply thunks.`);
     for (const thunk of arr) {
       this.memory[thunk.uuid] = photo;
       await this.visit(thunk);
@@ -71,6 +74,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
    *  3. A Jimp photo
    */
   async visitApply(a: Apply) {
+    debug(`Applying ${a.func.name} to photo ${a.photo.name}.`);
+
     const func = a.func.accept(this);
     const photo = await a.photo.accept(this);
     if (Array.isArray(func)) {
@@ -85,14 +90,15 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   async visit(n: INode): Promise<Jimp> {
     await n.accept(this);
-    //return (this.memory['CANVAS'] as unknown) as Jimp;
     return this.outputPhoto;
   }
 
   async visitDraw(d: Draw) {
     // get the canvas
+    debug(`Drawing ${d.instructions.length} images to the canvas.`);
     let canvas: Jimp = this.outputPhoto;
     for (var instruction of d.instructions) {
+      debug(`Drawing ${instruction.photo.name} to the canvas at ${instruction.loc}.`);
       let position: CoordinatePosition = this.getDrawPosition(instruction.loc);
       canvas.composite(await instruction.photo.accept(this), position.x, position.y)
     }
@@ -120,6 +126,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     let text = w.text;
     let textPos = w.position;
     let imageName = w.photo.name;
+    debug(`Writing ${text} to ${imageName} at ${textPos}.`);
+
     let imageCaption = {
                         text: text, 
                         alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER, 
@@ -185,14 +193,19 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   }
 
   async visitLet(l: Let) {
+    debug(`Creating ${l.name} from ${l.filename}.`);
+
     let photo = this.getJimpPhoto(l.filename);
     this.memory[l.name] = await photo;
   }
 
   async visitCanvas(c: Canvas) {
+    debug(`Creating a ${c.width} by ${c.height} ${c.color} canvas.`);
+
     let canvas: Jimp = await new Promise<Jimp>((resolve) => new Jimp(c.width, c.height, c.color.accept(this), (err, image) => 
       resolve(image) 
     ));
+
     this.memory['CANVAS'] = canvas;
     this.outputPhoto = canvas;
   }
@@ -202,10 +215,12 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   }
 
   visitDeclare(d: Declare) {
+    debug(`Creating a ${d.name} with ${d.calls.length} calls.`);
     this.memory[d.name] = d.calls;
   }
 
   async visitClone(c: Clone) {
+    debug(`Cloning ${c.src.name} into ${c.dest}.`);
     let photo = await c.src.accept(this);
     this.memory[c.dest] = photo;
   }
