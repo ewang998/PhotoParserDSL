@@ -13,6 +13,6 @@ const DefaultFunctions: { [key in DefaultFunctionsEnum]: PhotoFunction } = {
   SEPIA: (p: jimp) => p.sepia(),
   BRIGHTNESS: (p: jimp, level: number) => p.brightness(level),
   RESIZE: (p: jimp, width: number, height: number) => p.resize(width, height),
-  FLIP: (p: jimp, horizontal: boolean, vertical: boolean) => p.flip(horizontal, vertical),
+  FLIP: (p: jimp, direction: string) => p.flip(direction === 'HORIZONTAL', direction === 'VERTICAL'),
 };
 export default DefaultFunctions;

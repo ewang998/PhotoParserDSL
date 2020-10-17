@@ -44,7 +44,7 @@ class PhotoValidator implements INodeVisitor<string> {
 
     private constructor(rawPhotos: { [key: string]: Buffer }) {
         this.memory = {};
-        this.sourceFiles = new Set(...Object.keys(rawPhotos));
+        this.sourceFiles = new Set(Object.keys(rawPhotos));
         // Type constants (predefined functions; canvas) in memory.
         Object.keys(DefaultFunctionsEnum).forEach(v => (this.memory[v] = MemoryType.FUNC));
         this.memory['CANVAS'] = MemoryType.PHOTO;

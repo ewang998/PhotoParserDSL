@@ -76,12 +76,12 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   async visitApply(a: Apply) {
     debug(`Applying ${a.func.name} to photo ${a.photo.name}.`);
 
-    const func = a.func.accept(this);
+    const func = await a.func.accept(this);
     const photo = await a.photo.accept(this);
     if (Array.isArray(func)) {
       await this.evaluateApplyThunks(func, photo);
     } else if (func instanceof Function) {
-      const args = a.args.map((v) => v.accept(this));
+      const args = await Promise.all(a.args.map((v) => v.accept(this)));
       await func(photo, ...args);
     } else {
       throw new Error(`Invalid function in application: ${func}.`);
@@ -100,7 +100,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     for (var instruction of d.instructions) {
       debug(`Drawing ${instruction.photo.name} to the canvas at ${instruction.loc}.`);
       let position: CoordinatePosition = this.getDrawPosition(instruction.loc);
-      canvas.composite(await instruction.photo.accept(this), position.x, position.y)
+      let photo: Jimp = await instruction.photo.accept(this);
+      canvas.composite(photo, position.x, position.y)
     }
     // blitz is just deleting everything under your image
 
@@ -156,7 +157,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 }
 
   private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
-    let result: CoordinatePosition;
+    let result: CoordinatePosition = {x: 0, y: 0};
     let canvasH = this.outputPhoto.getHeight();
     let canvasW = this.outputPhoto.getHeight();
 
@@ -186,7 +187,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     await p.canvas.accept(this);
 
     for (var s of p.statements) {
-      s.accept(this);
+      await s.accept(this);
     }
 
     return this.outputPhoto;
@@ -201,16 +202,16 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   async visitCanvas(c: Canvas) {
     debug(`Creating a ${c.width} by ${c.height} ${c.color} canvas.`);
-    let canvas: Jimp = await new Jimp(c.width, c.height, c.color.accept(this));
+    let canvas: Jimp = await new Jimp(c.width, c.height, await c.color.accept(this));
     this.memory['CANVAS'] = canvas;
     this.outputPhoto = canvas;
   }
 
-  visitColor(c: Color) {
+  async visitColor(c: Color) {
     return c.hex;
   }
 
-  visitDeclare(d: Declare) {
+  async visitDeclare(d: Declare) {
     debug(`Creating a ${d.name} with ${d.calls.length} calls.`);
     this.memory[d.name] = d.calls;
   }
