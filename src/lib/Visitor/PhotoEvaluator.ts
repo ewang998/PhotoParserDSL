@@ -113,19 +113,18 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   }
 
   // Writes text to absolute position on identifier or canvas
-  visitWrite(w: Write) {
+  async visitWrite(w: Write) {
     // TODO: use rawPhotos, memory
     // TODO: writing text to AbsolutePosition
     let text = w.text;
     let textPos = w.position;
     let imageName = w.photo.name;
-    let loadedImage;
     let imageCaption = {
                         text: text, 
                         alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER, 
                         alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM
                       }; // object containing text and text positioning
-    let font = Jimp.FONT_SANS_10_BLACK;
+                      
     let coordinate = this.getAbCoordinate(textPos);
     
     // if imagename is canvas then grab canvas Jimp
@@ -138,23 +137,14 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
       })
     } else {
 
-    // use Jimp print to write text on image
-    Jimp.read(imageName)
-      // load font
-      .then(function (image) {
-        loadedImage = image;
-        return Jimp.loadFont(font) // should user be allowed to choose font, color, and size?
+      let photo: Jimp = await w.photo.accept(this);
+      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
+      .then(font => {
+        // should have modified the Jimp in memeory 
+        photo.print(font, coordinate.x, coordinate.y, imageCaption);
       })
-      // write text to image
-      .then(function (font) {
-        loadedImage.print(font, coordinate.x, coordinate.y, imageCaption) // prints text on to image. Add extra parameter maxImageSize for wrapping text within image borders
-        .write(imageName); // TODO: write back to orginal image? 
-      })
-      .catch(function (err) {
-          console.error("Unable to write text to image: " + err);
-      });
-    }
   }
+}
 
   private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
     let result: CoordinatePosition;
@@ -175,7 +165,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
         result.y = Math.floor(canvasH / 2);
         break;
       case AbsolutePositionEnum.RIGHT:
-        result.x = canvasW;
+        result.x = canvasW - Math.floor(canvasW / 8 );
         result.y = Math.floor(canvasH / 2);
         break;
     }
@@ -193,28 +183,29 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     return this.outputPhoto;
   }
 
-  visitLet(l: Let): Promise<null> {
-    throw new Error('Method not implemented.');
+  async visitLet(l: Let) {
+    let photo = this.getJimpPhoto(l.filename);
+    this.memory[l.name] = await photo;
   }
 
   visitCanvas(c: Canvas) {
-    let canvas: Jimp = new Jimp(c.width, c.height, c.color, (err, image) => {
+    let canvas: Jimp = new Jimp(c.width, c.height, c.color.accept(this), (err, image) => {
       // begin with an empty Jimp image as the canvas 
     })
     this.memory['CANVAS'] = canvas;
     this.outputPhoto = canvas;
   }
 
-  visitColor(c: Color) {
-    throw new Error('Method not implemented.');
+  async visitColor(c: Color) {
+    return c.hex;
   }
 
   visitDeclare(d: Declare) {
-    throw new Error('Method not implemented.');
+    this.memory[d.name] = d.calls;
   }
 
   async visitClone(c: Clone) {
-    let photo = await c.accept(this);
+    let photo = await c.src.accept(this);
     this.memory[c.dest] = photo;
   }
 }
