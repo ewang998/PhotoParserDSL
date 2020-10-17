@@ -142,7 +142,6 @@ class PhotoParser implements IParser {
     // COORDINATE_POSITION ::= "AT" "X" int "Y" int
     // RELATIVE_POSITION ::= "ABOVE" | "BELOW" | "TO THE LEFT OF" | "TO THE RIGHT OF"
     private parsePosition(tokenizer: ITokenizer): CoordinatePosition | RelativePosition {
-        console.log('position!');
         if (tokenizer.checkNext(/AT/i)) {
             // COORDINATE_POSITION
             tokenizer.getAndCheckNext(/AT/i);
@@ -154,7 +153,6 @@ class PhotoParser implements IParser {
             return { x, y };
         } else {
             // RELATIVE_POSITION
-            console.log('parsing position');
             let pos: RelativePositionEnum;
             for (const relPos of Object.values(RelativePositionEnum)) {
                 if (tokenizer.checkNext(new RegExp(relPos, 'i'))) {

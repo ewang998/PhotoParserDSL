@@ -1,0 +1,10 @@
+.markdown-container {
+    text-align: left;
+    display: inline-block;
+    background-color: lightgray;
+}
+
+.instructions-container {
+    text-align: left;
+    display: inline-block;
+}
