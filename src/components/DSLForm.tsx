@@ -2,16 +2,17 @@ import EBNFMarkdown from '../EBNF.md';
 import ExampleMarkdown from '../Example.md';
 import './DSLForm.css';
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import PhotoParser from '../lib/Parser/PhotoParser';
 import PhotoTokenizer from '../lib/Tokenizer/PhotoTokenizer';
 import PhotoEvaluator from '../lib/Visitor/PhotoEvaluator';
 import ImageUploader from 'react-images-upload';
 import PhotoValidator from '../lib/Visitor/PhotoValidator';
-import {file} from "@babel/types";
 
-let toBuffer = require('blob-to-buffer')
+import Jimp from 'jimp';
+
+let toBuffer = require('blob-to-buffer');
 
 function DSLForm() {
     const [inputString, setInputString] = useState('');
@@ -24,7 +25,9 @@ function DSLForm() {
 
     let [picturesBufferMap, setPicturesBufferMap] = useState({});
 
-    let [finalOutputPicture, setFinalOutputPicture] = useState(null);
+    let [finalOutputPictureBase64, setFinalOutputPictureBase64] = useState('');
+    let [finalOutputPictureMIME, setFinalOutputPictureBase64MIME] = useState('');
+
 
     let [ebnf, setEBNF] = useState(null);
 
@@ -39,8 +42,6 @@ function DSLForm() {
         //pass in the array of pictures (which is an array of File) to evaluator
         try {
 
-            console.log(picturesBufferMap["communication.png"]);
-
             const tokenizer = PhotoTokenizer.createTokenizer(inputString);
             const parser = PhotoParser.createParser();
             const program = parser.parse(tokenizer);
@@ -53,8 +54,19 @@ function DSLForm() {
                 return;
             }
 
-            const evaluator = PhotoEvaluator.createEvaluator({});
-            setFinalOutputPicture(await evaluator.visit(program));
+            const evaluator = PhotoEvaluator.createEvaluator(picturesBufferMap);
+
+            let image: Jimp = await evaluator.visit(program);
+
+            // let imageBuffer: Buffer = await image.getBufferAsync(image.getMIME()); //TODO
+            let imageBuffer: Buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+
+            let imageBase64: string = imageBuffer.toString('base64');
+
+            setFinalOutputPictureBase64(imageBase64);
+            //setFinalOutputPictureBase64MIME(image.getMIME());
+            setFinalOutputPictureBase64MIME(Jimp.MIME_PNG); //TODO
+
             setErrorString('');
         } catch (e) {
             setErrorString(e.message);
@@ -163,6 +175,16 @@ function DSLForm() {
         }
     };
 
+    const renderFinalImage = () => {
+
+        if (finalOutputPictureBase64 != '' && finalOutputPictureMIME != '') {
+            return <img src={`data:${finalOutputPictureMIME};base64,${finalOutputPictureBase64}`}
+                        alt={"finalOutputImage"}/>
+        } else {
+            return <div/>
+        }
+    };
+
     return (
         <div style={{textAlign: 'center'}}>
             <h1>PHOTO COLLAGE DSL PROGRAM</h1>
@@ -170,20 +192,20 @@ function DSLForm() {
             <h3>Instructions:</h3>
             <div className="instructions-container">
                 <p>
-                    1. Upload any images you wish to use in your collage.<br />
-                    2. Enter your program in the text area provided.<br />
-                    3. Click Build Collage!<br /><br />
+                    1. Upload any images you wish to use in your collage.<br/>
+                    2. Enter your program in the text area provided.<br/>
+                    3. Click Build Collage!<br/><br/>
 
-                    Remember that image names in your program must match the uploaded image name exactly!<br />
+                    Remember that image names in your program must match the uploaded image name exactly!<br/>
                 </p>
             </div>
             <h3>EBNF:</h3>
             <div>
-                <ReactMarkdown source={ebnf} className="markdown-container" />
+                <ReactMarkdown source={ebnf} className="markdown-container"/>
             </div>
             <h3>Example usage:</h3>
             <div>
-                <ReactMarkdown source={example} className="markdown-container" />
+                <ReactMarkdown source={example} className="markdown-container"/>
             </div>
             <h3> Upload your images here:</h3>
             <ImageUploader
@@ -214,7 +236,7 @@ function DSLForm() {
                 />
             </form>
             <h2 style={{color: 'red'}}>{errors}</h2>
-            <div>{finalOutputPicture}</div>
+            <div>{renderFinalImage()}</div>
         </div>
     );
 }
