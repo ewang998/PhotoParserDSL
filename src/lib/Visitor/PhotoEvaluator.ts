@@ -201,16 +201,12 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   async visitCanvas(c: Canvas) {
     debug(`Creating a ${c.width} by ${c.height} ${c.color} canvas.`);
-
-    let canvas: Jimp = await new Promise<Jimp>((resolve) => new Jimp(c.width, c.height, c.color.accept(this), (err, image) => 
-      resolve(image) 
-    ));
-
+    let canvas: Jimp = await new Jimp(c.width, c.height, c.color.accept(this));
     this.memory['CANVAS'] = canvas;
     this.outputPhoto = canvas;
   }
 
-  async visitColor(c: Color) {
+  visitColor(c: Color) {
     return c.hex;
   }
 
