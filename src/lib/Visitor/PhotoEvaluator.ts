@@ -175,7 +175,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   async visitProgram(p: Program): Promise<Jimp> {
     // create canvas 
-    p.canvas.accept(this);
+    await p.canvas.accept(this);
 
     for (var s of p.statements) {
       s.accept(this);
@@ -189,10 +189,10 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     this.memory[l.name] = await photo;
   }
 
-  visitCanvas(c: Canvas) {
-    let canvas: Jimp = new Jimp(c.width, c.height, c.color.accept(this), (err, image) => {
-      // begin with an empty Jimp image as the canvas 
-    })
+  async visitCanvas(c: Canvas) {
+    let canvas: Jimp = await new Promise<Jimp>((resolve) => new Jimp(c.width, c.height, c.color.accept(this), (err, image) => 
+      resolve(image) 
+    ));
     this.memory['CANVAS'] = canvas;
     this.outputPhoto = canvas;
   }
