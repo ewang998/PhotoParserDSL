@@ -189,8 +189,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     for (var s of p.statements) {
       await s.accept(this);
     }
-
-    return this.outputPhoto;
+    let result = this.outputPhoto;
+    return result;
   }
 
   async visitLet(l: Let) {
@@ -219,7 +219,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   async visitClone(c: Clone) {
     debug(`Cloning ${c.src.name} into ${c.dest}.`);
     let photo = await c.src.accept(this);
-    this.memory[c.dest] = photo;
+    let clone = photo.clone();
+    this.memory[c.dest] = clone;
   }
 }
 
