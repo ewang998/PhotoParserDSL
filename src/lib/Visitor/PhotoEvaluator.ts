@@ -25,6 +25,7 @@ const debug = str => console.log(`evaluator: ${str}`);
 
 class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   // A map of filenames to raw filebuffers
+  protected static fontPath = path.join(process.env.PUBLIC_URL, 'open-sans-12-black.fnt'); 
   protected rawPhotos: { [key: string]: Buffer };
   protected memory: { [key: string]: MemoryValue };
   protected outputPhoto: Jimp;
@@ -116,41 +117,35 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     debug(`Writing ${text} to ${imageName} at ${textPos}.`);
 
     let imageCaption = {
-                        text: text, 
-                        alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER, 
-                        alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM
+                        text, 
+                        alignmentX: this.getAbsoluteXAlignment(textPos), 
+                        alignmentY: this.getAbsoluteYAlignment(textPos)
                       }; // object containing text and text positioning
-
-    let coordinate = this.getAbCoordinate(textPos);
-    const font = await Jimp.loadFont(path.join(process.env.PUBLIC_URL, 'open-sans-12-black.fnt'));
+    const font = await Jimp.loadFont(PhotoEvaluator.fontPath);
     let photo: Jimp = imageName === "CANVAS" ? this.outputPhoto : await w.photo.accept(this);
-    this.outputPhoto = await photo.print(font, coordinate.x, coordinate.y, imageCaption, photo.getWidth(), photo.getHeight());
+    this.outputPhoto = await photo.print(font, 0, 0, imageCaption, photo.getWidth(), photo.getHeight());
   }
 
-  private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
-    let result: CoordinatePosition = {x: 0, y: 0};
-    let canvasH = this.outputPhoto.getHeight();
-    let canvasW = this.outputPhoto.getHeight();
+  private getAbsoluteXAlignment(ab: AbsolutePositionEnum): number {
+    switch(ab) {
+      case AbsolutePositionEnum.LEFT:
+          return Jimp.HORIZONTAL_ALIGN_LEFT;
+      case AbsolutePositionEnum.RIGHT:
+          return Jimp.HORIZONTAL_ALIGN_RIGHT;
+      default:
+          return Jimp.HORIZONTAL_ALIGN_CENTER;
+    }
+  }
 
+  private getAbsoluteYAlignment(ab: AbsolutePositionEnum): number {
     switch(ab) {
       case AbsolutePositionEnum.BOTTOM:
-        result.x = Math.floor(canvasW / 2);
-        result.y = canvasH;
-        break;
+        return Jimp.VERTICAL_ALIGN_BOTTOM;
       case AbsolutePositionEnum.TOP:
-        result.x = Math.floor(canvasW / 2);
-        result.y = 0;
-        break;
-      case AbsolutePositionEnum.LEFT:
-        result.x = 0;
-        result.y = Math.floor(canvasH / 2);
-        break;
-      case AbsolutePositionEnum.RIGHT:
-        result.x = canvasW - Math.floor(canvasW / 8 );
-        result.y = Math.floor(canvasH / 2);
-        break;
+        return Jimp.VERTICAL_ALIGN_TOP;
+      default:
+        return Jimp.VERTICAL_ALIGN_MIDDLE;
     }
-    return result;
   }
 
   async visitProgram(p: Program): Promise<Jimp> {
