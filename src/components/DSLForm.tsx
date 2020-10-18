@@ -28,6 +28,7 @@ function DSLForm() {
     let [finalOutputPictureBase64, setFinalOutputPictureBase64] = useState('');
     let [finalOutputPictureMIME, setFinalOutputPictureBase64MIME] = useState('');
 
+    let [filename, setFileName] = useState('');
 
     let [ebnf, setEBNF] = useState(null);
 
@@ -67,13 +68,12 @@ function DSLForm() {
             //setFinalOutputPictureBase64MIME(image.getMIME());
             setFinalOutputPictureBase64MIME(Jimp.MIME_PNG); //TODO
 
+            setFileName(program.filename);
             setErrorString('');
         } catch (e) {
             setErrorString(e.message);
         }
 
-        //TODO: set the retImage to finalOutputPicture, this will be rendered on the web page
-        //setFinalOutputPicture(retImage); //something like this, handle promise
     };
 
     const handleSubmit = async (event: FormEvent) => {
@@ -86,17 +86,6 @@ function DSLForm() {
             setErrorString("You didn't upload any pictures and/or wrote a program!");
         }
     };
-
-    //TODO: can comment this out for now to prevent auto form submission
-    // const handleInput = async (event: FormEvent) => {
-    //     event.preventDefault();
-    //
-    //     setTimeout(function () {
-    //         if (inputString !== '' && pictures.length > 0) {
-    //             renderInput();
-    //         }
-    //     }, 500);
-    // };
 
     const onDrop = (pictureArray: any[]) => {
         //replace the existing array
@@ -185,6 +174,16 @@ function DSLForm() {
         }
     };
 
+    const downloadFinalImage = () => {
+        if (finalOutputPictureMIME != '' && finalOutputPictureBase64 != '') {
+            const linkSource = `data:${finalOutputPictureMIME};base64,${finalOutputPictureBase64}`;
+            const downloadLink = document.createElement("a");
+            downloadLink.href = linkSource;
+            downloadLink.download = filename;
+            downloadLink.click();
+        }
+    };
+
     return (
         <div style={{textAlign: 'center'}}>
             <h1>PHOTO COLLAGE DSL PROGRAM</h1>
@@ -236,6 +235,7 @@ function DSLForm() {
             </form>
             <h2 style={{color: 'red'}}>{errors}</h2>
             <div>{renderFinalImage()}</div>
+            <button onClick={downloadFinalImage}>Download collage!</button>
         </div>
     );
 }
