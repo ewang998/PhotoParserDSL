@@ -1,13 +1,12 @@
 import INodeVisitor from '../Visitor/INodeVisitor';
 import CoordinatePosition from './locations/CoordinatePosition';
-import RelativePosition from './locations/RelativePosition';
 
 import Var from './objects/Var';
 import Statement from './Statement';
 
 export interface DrawInstruction {
   photo: Var;
-  loc: RelativePosition | CoordinatePosition;
+  loc: CoordinatePosition;
 }
 
 class Draw implements Statement {

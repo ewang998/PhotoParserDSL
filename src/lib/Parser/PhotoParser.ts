@@ -1,11 +1,9 @@
-import { to } from 'color-string';
 import Draw, { DrawInstruction } from '../ast/Draw';
 import Apply from '../ast/functions/Apply';
 import ApplyThunk from '../ast/functions/ApplyThunk';
 import Declare from '../ast/functions/Declare';
 import AbsolutePosition from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
-import RelativePosition, { RelativePositionEnum } from '../ast/locations/RelativePosition';
 import Canvas from '../ast/objects/Canvas';
 import Clone from '../ast/objects/Clone';
 import Color from '../ast/objects/Color';
@@ -47,7 +45,7 @@ class PhotoParser implements IParser {
 
         let program: Program = new Program(canvas, statements, filename);
 
-        // console.log(program);
+        console.log(program);
 
         return program;
     }
@@ -118,57 +116,36 @@ class PhotoParser implements IParser {
         return new Clone(src, dest);
     }
 
-    // DRAW ::= "DRAW TO CANVAS" (IDENTIFIER POSITION) (, IDENTIFIER POSITION)*
+    // DRAW ::= "DRAW TO CANVAS" (IDENTIFIER COORDINATE_POSITION) ("," IDENTIFIER COORDINATE_POSITION)*
     private parseDraw(tokenizer: ITokenizer): Draw {
         tokenizer.getAndCheckNext(/DRAW TO CANVAS/i);
 
         let drawInstructions: DrawInstruction[] = [];
 
         let firstPhoto: Var = new Var(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER));
-        let firstPosition: CoordinatePosition | RelativePosition = this.parsePosition(tokenizer);
+        let firstPosition: CoordinatePosition = this.parseCoordinatePosition(tokenizer);
         drawInstructions.push({ photo: firstPhoto, loc: firstPosition });
 
         while (tokenizer.checkNext(PhotoParser.REGEXPS.COMMA)) {
             tokenizer.getAndCheckNext(PhotoParser.REGEXPS.COMMA);
             let photo: Var = new Var(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER));
-            let position: CoordinatePosition | RelativePosition = this.parsePosition(tokenizer);
+            let position: CoordinatePosition = this.parseCoordinatePosition(tokenizer);
             drawInstructions.push({ photo, loc: position });
         }
 
         return new Draw(drawInstructions);
     }
 
-    // POSITION ::= COORDINATE_POSITION | RELATIVE_POSITION IDENTIFIER
+    // POSITION ::= COORDINATE_POSITION
     // COORDINATE_POSITION ::= "AT" "X" int "Y" int
-    // RELATIVE_POSITION ::= "ABOVE" | "BELOW" | "TO THE LEFT OF" | "TO THE RIGHT OF"
-    private parsePosition(tokenizer: ITokenizer): CoordinatePosition | RelativePosition {
-        if (tokenizer.checkNext(/AT/i)) {
-            // COORDINATE_POSITION
-            tokenizer.getAndCheckNext(/AT/i);
-            tokenizer.getAndCheckNext(/X/i);
-            let x: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
-            tokenizer.getAndCheckNext(/Y/i);
-            let y: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
+    private parseCoordinatePosition(tokenizer: ITokenizer): CoordinatePosition {
+        tokenizer.getAndCheckNext(/AT/i);
+        tokenizer.getAndCheckNext(/X/i);
+        let x: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
+        tokenizer.getAndCheckNext(/Y/i);
+        let y: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
 
-            return { x, y };
-        } else {
-            // RELATIVE_POSITION
-            let pos: RelativePositionEnum;
-            for (const relPos of Object.values(RelativePositionEnum)) {
-                if (tokenizer.checkNext(new RegExp(relPos, 'i'))) {
-                    pos = tokenizer.getAndCheckNext(new RegExp(relPos, 'i')) as RelativePositionEnum;
-                    break;
-                }
-            }
-
-            if (!pos) {
-                throw new Error(`Unknown relative position starting with: ${tokenizer.getNext()}`);
-            }
-
-            let relativeTo: string = tokenizer.getAndCheckNext(PhotoParser.REGEXPS.IDENTIFIER);
-
-            return new RelativePosition(relativeTo, pos);
-        }
+        return { x, y };
     }
 
     // MANIPULATION ::= "APPLY" COMMAND "TO" ("CANVAS" | IDENTIFIER)
@@ -195,9 +172,9 @@ class PhotoParser implements IParser {
         let text: string = tokenizer.getAndCheckNext(REGEXPS.TEXT).replace('"', '');
 
         let pos: AbsolutePosition;
-        for (const relPos of Object.values(AbsolutePosition)) {
-            if (tokenizer.checkNext(new RegExp(relPos, 'i'))) {
-                pos = tokenizer.getAndCheckNext(new RegExp(relPos, 'i')) as AbsolutePosition;
+        for (const absPos of Object.values(AbsolutePosition)) {
+            if (tokenizer.checkNext(new RegExp(absPos, 'i'))) {
+                pos = tokenizer.getAndCheckNext(new RegExp(absPos, 'i')) as AbsolutePosition;
                 break;
             }
         }
@@ -249,24 +226,25 @@ class PhotoParser implements IParser {
     // BRIGHTNESS   ::= "BRIGHTNESS" [-1,1]
     // RESIZE       ::= "RESIZE" "WIDTH" int "HEIGHT" int
     private parseCommand(tokenizer: ITokenizer): { fn: Var; args: IObject[] } {
-        let fnName: string = tokenizer.getNext().toUpperCase();
+        let fnName: string = tokenizer.getNext();
+        let fnNameToUpper: string = fnName.toUpperCase();
         let fn: Var;
         let args: IObject[] = [];
-        switch (fnName) {
+        switch (fnNameToUpper) {
             case 'BLUR':
             case 'GREYSCALE':
             case 'INVERT':
             case 'NORMALIZE':
             case 'SEPIA':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 break;
             case 'ROTATE':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let deg: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
                 args.push(new Primitive(deg));
                 break;
             case 'RESIZE':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 tokenizer.getAndCheckNext(/WIDTH/i);
                 let width: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
                 tokenizer.getAndCheckNext(/HEIGHT/i);
@@ -275,7 +253,7 @@ class PhotoParser implements IParser {
                 args.push(new Primitive(height));
                 break;
             case 'FLIP':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let orientation: string = tokenizer.getNext().toUpperCase();
                 if (orientation === 'HORIZONTAL' || orientation === 'VERTICAL') {
                     args.push(new Primitive(orientation));
@@ -284,7 +262,7 @@ class PhotoParser implements IParser {
                 }
                 break;
             case 'BRIGHTNESS':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let brightness: number = parseFloat(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.FLOAT));
                 args.push(new Primitive(brightness));
                 break;

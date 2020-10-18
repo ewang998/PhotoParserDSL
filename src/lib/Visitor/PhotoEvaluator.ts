@@ -17,7 +17,6 @@ import DefaultFunctions from '../functions/DefaultFunctions';
 import PhotoFunction from '../functions/PhotoFunction';
 import AbsolutePositionEnum from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
-import RelativePosition from '../ast/locations/RelativePosition';
 
 export type MemoryValue = Jimp | PhotoFunction | ApplyThunk[];
 
@@ -99,25 +98,13 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     let canvas: Jimp = this.outputPhoto;
     for (var instruction of d.instructions) {
       debug(`Drawing ${instruction.photo.name} to the canvas at ${instruction.loc}.`);
-      let position: CoordinatePosition = this.getDrawPosition(instruction.loc);
+      let position: CoordinatePosition = instruction.loc;
       let photo: Jimp = await instruction.photo.accept(this);
       canvas.composite(photo, position.x, position.y)
     }
     // blitz is just deleting everything under your image
 
     this.outputPhoto = canvas;
-  }
-
-  private getDrawPosition(loc: RelativePosition | CoordinatePosition): CoordinatePosition {
-    let result: CoordinatePosition;
-    if (loc instanceof RelativePosition) {
-        // TODO: how are we gonna get the position here?
-        result.x = 0;
-        result.y = 0;
-        return result;
-    } else {
-      return loc;
-    }
   }
 
   // Writes text to absolute position on identifier or canvas
@@ -204,8 +191,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     for (var s of p.statements) {
       await s.accept(this);
     }
-
-    return this.outputPhoto;
+    let result = this.outputPhoto;
+    return result;
   }
 
   async visitLet(l: Let) {
@@ -234,7 +221,8 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
   async visitClone(c: Clone) {
     debug(`Cloning ${c.src.name} into ${c.dest}.`);
     let photo = await c.src.accept(this);
-    this.memory[c.dest] = photo;
+    let clone = photo.clone();
+    this.memory[c.dest] = clone;
   }
 }
 
