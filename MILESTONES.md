@@ -1,5 +1,36 @@
 # Milestone Document
 
+## Final EBNF (October 17, 2020)
+
+```
+PROGRAM      ::= CANVAS STATEMENT* "RENDER AS" FILENAME SEP
+CANVAS       ::= "CANVAS" "WIDTH" int "HEIGHT" int "COLOR" COLOR SEP
+COLOR        ::= ^#(?:[0-9a-fA-F]{3}){1,2}$
+
+STATEMENT    ::= (PICTURE | CLONE | DRAW | MANIPULATION | WRITE | DEFINE) SEP
+FILENAME     ::= \w+ "." EXT
+EXT          ::= "png" | "jpeg" | "jpg"
+IDENTIFIER   ::= [\w_]+
+TEXT         ::= string
+SEP          ::= ";"
+
+PICTURE      ::= "LET" FILENAME "BE" IDENTIFIER
+CLONE        ::= "CLONE" (IDENTIFIER | "CANVAS") "AS" IDENTIFIER
+DRAW         ::= "DRAW TO CANVAS" (IDENTIFIER COORDINATE_POSITION) ("," IDENTIFIER COORDINATE_POSITION)*
+MANIPULATION ::= "APPLY" COMMAND "TO" ("CANVAS" | IDENTIFIER)
+WRITE        ::= "WRITE" TEXT ABSOLUTE_POSITION (IDENTIFIER | "CANVAS")
+DEFINE       ::= "DECLARE" IDENTIFIER "AS" COMMAND ("AND" COMMAND)*
+
+COORDINATE_POSITION ::= "AT" "X" int "Y" int
+ABSOLUTE_POSITION ::= "AT THE BOTTOM OF" | "AT THE TOP OF" | "TO THE LEFT OF" | "TO THE RIGHT OF"
+
+COMMAND      ::= "BLUR" | ROTATE | "GREYSCALE" | RESIZE | FLIP | BRIGHTNESS | "INVERT" | "NORMALIZE" | "SEPIA" | IDENTIFIER
+FLIP         ::= "FLIP" ("HORIZONTAL" | "VERTICAL")
+ROTATE       ::= "ROTATE" [0-360]
+BRIGHTNESS   ::= "BRIGHTNESS" [-1,1]
+RESIZE       ::= "RESIZE" "WIDTH" int "HEIGHT" int
+```
+
 ## Milestone 4 (October 9, 2020)
 
 ### Status of implementation

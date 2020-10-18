@@ -1,7 +1,6 @@
 import REGEXPS from '../RegExps';
 import escapeStringRegex from 'escape-string-regexp';
 import AbstractTokenizer from './AbstractTokenizer';
-import { RelativePositionEnum } from '../ast/locations/RelativePosition';
 import AbsolutePositionEnum from '../ast/locations/AbsolutePosition';
 import DefaultFunctionsEnum from '../functions/DefaultFunctionsEnum';
 
@@ -13,7 +12,7 @@ export class PhotoTokenizer extends AbstractTokenizer {
     private static FIXED_LITERALS: string[] = ["RENDER AS", "CANVAS", "WIDTH", "HEIGHT", "COLOR", "LET", "BE", 
         "CLONE", "AS", "DRAW TO CANVAS", ",", "WRITE", "DECLARE", "AND", "AT", "X", "Y", "ABOVE",
         "BELOW", "APPLY", "TO", "HORIZONTAL", "VERTICAL", ...Object.values(DefaultFunctionsEnum),
-        ...Object.values(RelativePositionEnum), ...Object.values(AbsolutePositionEnum)];
+        ...Object.values(AbsolutePositionEnum)];
 
     private static SEPARATORS: string[] = [';'];
     private static CUSTOM_TOKEN_PATTERNS: RegExp[] = [
