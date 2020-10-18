@@ -17,6 +17,7 @@ import DefaultFunctions from '../functions/DefaultFunctions';
 import PhotoFunction from '../functions/PhotoFunction';
 import AbsolutePositionEnum from '../ast/locations/AbsolutePosition';
 import CoordinatePosition from '../ast/locations/CoordinatePosition';
+import path from 'path';
 
 export type MemoryValue = Jimp | PhotoFunction | ApplyThunk[];
 
@@ -123,24 +124,9 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
                       }; // object containing text and text positioning
 
     let coordinate = this.getAbCoordinate(textPos);
-    
-    // if imagename is canvas then grab canvas Jimp
-    if (imageName === 'CANVAS') {
-      let canvas: Jimp = this.outputPhoto;
-      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
-      .then(font => {
-        canvas.print(font, coordinate.x, coordinate.y, imageCaption);
-        this.outputPhoto = canvas;
-      })
-    } else {
-
-      let photo: Jimp = await w.photo.accept(this);
-      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
-      .then(font => {
-        // should have modified the Jimp in memeory 
-        photo.print(font, coordinate.x, coordinate.y, imageCaption);
-      })
-  }
+    const font = await Jimp.loadFont(path.join(process.env.PUBLIC_URL, 'open-sans-12-black.fnt'));
+    let photo: Jimp = imageName === "CANVAS" ? this.outputPhoto : await w.photo.accept(this);
+    this.outputPhoto = await photo.print(font, coordinate.x, coordinate.y, imageCaption, photo.getWidth(), photo.getHeight());
 }
 
   private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
