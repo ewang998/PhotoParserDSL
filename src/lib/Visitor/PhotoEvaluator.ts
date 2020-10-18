@@ -110,8 +110,6 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   // Writes text to absolute position on identifier or canvas
   async visitWrite(w: Write) {
-    // TODO: use rawPhotos, memory
-    // TODO: writing text to AbsolutePosition
     let text = w.text;
     let textPos = w.position;
     let imageName = w.photo.name;
@@ -127,7 +125,7 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
     const font = await Jimp.loadFont(path.join(process.env.PUBLIC_URL, 'open-sans-12-black.fnt'));
     let photo: Jimp = imageName === "CANVAS" ? this.outputPhoto : await w.photo.accept(this);
     this.outputPhoto = await photo.print(font, coordinate.x, coordinate.y, imageCaption, photo.getWidth(), photo.getHeight());
-}
+  }
 
   private getAbCoordinate(ab: AbsolutePositionEnum): CoordinatePosition {
     let result: CoordinatePosition = {x: 0, y: 0};

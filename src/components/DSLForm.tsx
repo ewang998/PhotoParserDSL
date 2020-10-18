@@ -58,6 +58,7 @@ function DSLForm() {
             const evaluator = PhotoEvaluator.createEvaluator(picturesBufferMap);
 
             let image: Jimp = await evaluator.visit(program);
+            console.log("Image: " + image);
 
             // let imageBuffer: Buffer = await image.getBufferAsync(image.getMIME()); //TODO
             let imageBuffer: Buffer = await image.getBufferAsync(Jimp.MIME_PNG);

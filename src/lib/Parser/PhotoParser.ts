@@ -45,7 +45,7 @@ class PhotoParser implements IParser {
 
         let program: Program = new Program(canvas, statements, filename);
 
-        // console.log(program);
+        console.log(program);
 
         return program;
     }
@@ -226,24 +226,25 @@ class PhotoParser implements IParser {
     // BRIGHTNESS   ::= "BRIGHTNESS" [-1,1]
     // RESIZE       ::= "RESIZE" "WIDTH" int "HEIGHT" int
     private parseCommand(tokenizer: ITokenizer): { fn: Var; args: IObject[] } {
-        let fnName: string = tokenizer.getNext().toUpperCase();
+        let fnName: string = tokenizer.getNext();
+        let fnNameToUpper: string = fnName.toUpperCase();
         let fn: Var;
         let args: IObject[] = [];
-        switch (fnName) {
+        switch (fnNameToUpper) {
             case 'BLUR':
             case 'GREYSCALE':
             case 'INVERT':
             case 'NORMALIZE':
             case 'SEPIA':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 break;
             case 'ROTATE':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let deg: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
                 args.push(new Primitive(deg));
                 break;
             case 'RESIZE':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 tokenizer.getAndCheckNext(/WIDTH/i);
                 let width: number = parseInt(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.INT));
                 tokenizer.getAndCheckNext(/HEIGHT/i);
@@ -252,7 +253,7 @@ class PhotoParser implements IParser {
                 args.push(new Primitive(height));
                 break;
             case 'FLIP':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let orientation: string = tokenizer.getNext().toUpperCase();
                 if (orientation === 'HORIZONTAL' || orientation === 'VERTICAL') {
                     args.push(new Primitive(orientation));
@@ -261,7 +262,7 @@ class PhotoParser implements IParser {
                 }
                 break;
             case 'BRIGHTNESS':
-                fn = new Var(fnName);
+                fn = new Var(fnNameToUpper);
                 let brightness: number = parseFloat(tokenizer.getAndCheckNext(PhotoParser.REGEXPS.FLOAT));
                 args.push(new Primitive(brightness));
                 break;
