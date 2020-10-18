@@ -10,7 +10,7 @@ import Primitive from '../ast/objects/Primitive';
 import Var from '../ast/objects/Var';
 import Program from '../ast/Program';
 import INodeVisitor from './INodeVisitor';
-import Jimp from 'jimp';
+import Jimp, { FONT_SANS_8_BLACK, FONT_SANS_8_WHITE } from 'jimp';
 import Draw from '../ast/Draw';
 import Write from '../ast/Write';
 import DefaultFunctions from '../functions/DefaultFunctions';
@@ -122,9 +122,9 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
 
   // Writes text to absolute position on identifier or canvas
   async visitWrite(w: Write) {
-    // TODO: use rawPhotos, memory
-    // TODO: writing text to AbsolutePosition
     let text = w.text;
+    text = "apple";
+    console.log("Text: " + text);
     let textPos = w.position;
     let imageName = w.photo.name;
     debug(`Writing ${text} to ${imageName} at ${textPos}.`);
@@ -136,22 +136,37 @@ class PhotoEvaluator implements INodeVisitor<Promise<Jimp>> {
                       }; // object containing text and text positioning
 
     let coordinate = this.getAbCoordinate(textPos);
-    
+
     // if imagename is canvas then grab canvas Jimp
     if (imageName === 'CANVAS') {
       let canvas: Jimp = this.outputPhoto;
-      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
+      console.log("up");
+      Jimp.loadFont(FONT_SANS_8_BLACK)
       .then(font => {
+        console.log("here");
         canvas.print(font, coordinate.x, coordinate.y, imageCaption);
         this.outputPhoto = canvas;
+        console.log("Done");
+      })
+      .catch(err => {
+        console.log("catch error: " + err);
       })
     } else {
+      //let photo: Jimp = await instruction.photo.accept(this);
 
       let photo: Jimp = await w.photo.accept(this);
-      Jimp.loadFont(Jimp.FONT_SANS_16_BLACK)
+      console.log(photo);
+      console.log("RIGHT");
+      Jimp.loadFont(FONT_SANS_8_BLACK)
       .then(font => {
         // should have modified the Jimp in memeory 
+        console.log("here:");
         photo.print(font, coordinate.x, coordinate.y, imageCaption);
+        this.outputPhoto = photo;
+        console.log("Done");
+      })
+      .catch(err => {
+        console.log("catch error: " + err);
       })
   }
 }
