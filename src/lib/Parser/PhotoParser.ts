@@ -169,7 +169,7 @@ class PhotoParser implements IParser {
     // WRITE ::= "WRITE" TEXT ABSOLUTE_POSITION (IDENTIFIER | "CANVAS")
     private parseWrite(tokenizer: ITokenizer): Write {
         tokenizer.getAndCheckNext(/WRITE/i);
-        let text: string = tokenizer.getAndCheckNext(REGEXPS.TEXT).replace('"', '');
+        let text: string = tokenizer.getAndCheckNext(REGEXPS.TEXT).replaceAll('"', '');
 
         let pos: AbsolutePosition;
         for (const absPos of Object.values(AbsolutePosition)) {

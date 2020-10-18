@@ -176,7 +176,7 @@ function DSLForm() {
     };
 
     const downloadFinalImage = () => {
-        if (finalOutputPictureMIME != '' && finalOutputPictureBase64 != '') {
+        if (finalOutputPictureMIME !== '' && finalOutputPictureBase64 !== '') {
             const linkSource = `data:${finalOutputPictureMIME};base64,${finalOutputPictureBase64}`;
             const downloadLink = document.createElement("a");
             downloadLink.href = linkSource;
